@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.border.Border;
 
 /**
  *
@@ -28,7 +29,7 @@ import javax.swing.JMenuItem;
 DOCUMENTATION
 */
 
-public class FileExplorerWindow extends JPanel {
+public class FileExplorerWindow extends JFileChooser {
     
     public FileExplorerWindow() {
         
