@@ -69,7 +69,6 @@ class ProgramFrame extends JFrame
         fileExplorerWindowConstraints.gridx = 1;
         fileExplorerWindowConstraints.gridy = 1;
         fileExplorerWindowConstraints.gridheight = 3;
-        fileExplorerWindowConstraints.ipadx = 250;
         fileExplorerWindowConstraints.fill = GridBagConstraints.BOTH;
         fileExplorerWindowConstraints.anchor = GridBagConstraints.CENTER;
         fileExplorerWindowConstraints.weightx = 0;
