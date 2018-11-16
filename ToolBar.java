@@ -35,24 +35,26 @@ DOCUMENTATION
 
 public class ToolBar extends JToolBar implements ActionListener, KeyListener{
     
-    public ToolBar(){
+    private FileExplorerWindow file_explorer_window;
+    
+    public ToolBar(FileExplorerWindow file_explorer_window){
         
         setFloatable(false);
+        setFileExplorerWindow(file_explorer_window);
         
-        
-        JButton play, pause, stop;
+        JButton play, pause, stop, showFileExplorer;
         
         play = makeButton("play.png", "play", "playButton");
         pause = makeButton("pause.png", "pause", "pauseButton");
         stop = makeButton("stop.png", "stop", "stopButton");
+        showFileExplorer = makeButton("show.png", "show", "showFileExplorer");
         
         add(play);
         add(pause);
         add(stop);
+        add(showFileExplorer);
         
-        play.addActionListener(this);
-        pause.addActionListener(this);
-        stop.addActionListener(this);
+        
         
     }
 
@@ -77,6 +79,15 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
             
         }
         if (a.getActionCommand().equals("stop")){
+            
+        }
+        if (e.getActionCommand().equals("show")){
+            if (getFileExplorerWindow().isVisible()){
+                getFileExplorerWindow().setVisible(false);
+            }
+            else{
+                getFileExplorerWindow().setVisible(true);
+            }
             
         }
     }
@@ -120,4 +131,11 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
         return button;
     }
     
+    FileExplorerWindow getFileExplorerWindow(){
+        return file_explorer_window;
+    }
+    
+    void setFileExplorerWindow(FileExplorerWindow other){
+        file_explorer_window = other;
+    }
 }
