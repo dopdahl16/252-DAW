@@ -10,6 +10,11 @@ import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URL;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -34,6 +39,7 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
         
         setFloatable(false);
         
+        
         JButton play, pause, stop;
         
         play = makeButton("play.png", "play", "playButton");
@@ -51,14 +57,26 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("play")){
+    public void actionPerformed(ActionEvent a) {
+        File soundFile = new File("src/data/crows.wav");
+        if (a.getActionCommand().equals("play")){
+       try{
+            AudioInputStream sound = AudioSystem.getAudioInputStream(soundFile);
+            AudioFormat format = sound.getFormat();
+            DataLine.Info info = new DataLine.Info(Clip.class, sound.getFormat());
+            Clip sounds = (Clip) AudioSystem.getLine(info);
+                sounds.open(sound);
+                sounds.start();
+            }
+       catch (Exception e){
+           System.out.println("Didn't work");
+       }
+        }
+
+        if (a.getActionCommand().equals("pause")){
             
         }
-        if (e.getActionCommand().equals("pause")){
-            
-        }
-        if (e.getActionCommand().equals("stop")){
+        if (a.getActionCommand().equals("stop")){
             
         }
     }
@@ -80,8 +98,8 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
     
     protected JButton makeButton(String imageName, String actionCommand, String altText) {
         
-        File img_file = new File("images/" + imageName);
-        String img_string = "images/" + imageName;
+        File img_file = new File("src/data/images/" + imageName);
+        String img_string = "src/data/images/" + imageName;
         ImageIcon img_ico = new ImageIcon(img_string, altText);
         Image image = img_ico.getImage();
         Image newimg = image.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
