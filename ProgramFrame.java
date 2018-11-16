@@ -36,10 +36,10 @@ class ProgramFrame extends JFrame
         setTitle(OUR_TITLE);
         setLayout(new GridBagLayout());
         
-        MenuBar our_menu_bar = new MenuBar();
-        ToolBar our_tool_bar = new ToolBar();
         MainDisplayWindow our_main_display_window = new MainDisplayWindow();
         FileExplorerWindow our_file_explorer_window = new FileExplorerWindow();
+        MenuBar our_menu_bar = new MenuBar();
+        ToolBar our_tool_bar = new ToolBar(our_file_explorer_window);
         
         GridBagConstraints menuBarConstraints = new GridBagConstraints();
         GridBagConstraints toolBarConstraints = new GridBagConstraints();
@@ -78,6 +78,7 @@ class ProgramFrame extends JFrame
         getContentPane().add(our_tool_bar, toolBarConstraints);
         getContentPane().add(our_main_display_window, audioDisplayWindowConstraints);
         getContentPane().add(our_file_explorer_window, fileExplorerWindowConstraints);
+        our_file_explorer_window.setVisible(true);
         pack();
         
         }
