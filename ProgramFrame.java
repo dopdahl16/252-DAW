@@ -8,6 +8,7 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -30,16 +31,21 @@ class ProgramFrame extends JFrame
 {
     
     private static final String OUR_TITLE = "DAW";
+    public ArrayList<File> tracks_list = new ArrayList<File>();
 
     public ProgramFrame()
     {
         setTitle(OUR_TITLE);
         setLayout(new GridBagLayout());
         
+        //This is just a sample addition to tracks_list so the toolbar has something to play
+        File jjj = new File("sounds/0900.wav");
+        tracks_list.add(jjj);
+        
         MainDisplayWindow our_main_display_window = new MainDisplayWindow();
         FileExplorerWindow our_file_explorer_window = new FileExplorerWindow();
         MenuBar our_menu_bar = new MenuBar();
-        ToolBar our_tool_bar = new ToolBar(our_file_explorer_window);
+        ToolBar our_tool_bar = new ToolBar(our_file_explorer_window, tracks_list);
         
         GridBagConstraints menuBarConstraints = new GridBagConstraints();
         GridBagConstraints toolBarConstraints = new GridBagConstraints();
