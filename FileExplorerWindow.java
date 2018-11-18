@@ -16,6 +16,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -29,14 +30,49 @@ import javax.swing.border.Border;
 DOCUMENTATION
 */
 
-public class FileExplorerWindow extends JFileChooser {
+public class FileExplorerWindow extends JFileChooser implements ActionListener {
     
-    public FileExplorerWindow() {
+    public ArrayList<File> tracks_list;
+    
+    public FileExplorerWindow(ArrayList<File> tracks_list) {
         
         setBorder(BorderFactory.createLineBorder(Color.yellow));
+        setTracksList(tracks_list);
+        //setCurrentDirectory(new File ("/home/opdada01/Music"));
+        setCurrentDirectory(new File ("/home/opdada01/NetBeansProjects/DAW/sounds"));
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(null, "wav");
+        setFileFilter(filter);
+        addActionListener(this);
         
-                
+        
+               
     }
     
+    ArrayList<File> getTracksList(){
+        return tracks_list;
+    }
+    
+    void setTracksList(ArrayList<File> other){
+        tracks_list = other;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand() == "ApproveSelection"){
+            if (!(getTracksList().contains(getSelectedFile()))){
+                getTracksList().add(getSelectedFile());
+                System.out.println(".wav file:" + getSelectedFile() + " loaded into program");
+                JOptionPane loaded_notification = new JOptionPane();
+                loaded_notification.showMessageDialog(this, ".wav file: \"" + getSelectedFile().getName() + "\" loaded into program");
+            }
+            else{
+                JOptionPane loaded_notification = new JOptionPane();
+                loaded_notification.showMessageDialog(this, ".wav file: \"" + getSelectedFile().getName() + "\" is already loaded into program");
+            }
+            
+        }
+       
+    }
     
 }
+
