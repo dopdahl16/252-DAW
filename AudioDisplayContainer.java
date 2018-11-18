@@ -44,20 +44,7 @@ public class AudioDisplayContainer extends JPanel implements ActionListener{
         add(audio_file_info, BorderLayout.LINE_START);
         add(audio_file_display, BorderLayout.LINE_END);
         
-        //made a separate folder within my DAW project called “data” which holds the sound I want to use: http://soundbible.com/1929-Crow-Call-2.html downloaded here
-
-        File crowSound = new File("src/data/crows.wav");
-        try{
-        AudioInputStream crow = AudioSystem.getAudioInputStream(crowSound);
-        AudioFormat format = crow.getFormat();
-        DataLine.Info info = new DataLine.Info(Clip.class, crow.getFormat());
-        Clip crowCalls = (Clip) AudioSystem.getLine(info);
-            crowCalls.open(crow);
-            crowCalls.start();
-        }
-        catch(Exception e){
-            System.out.println("It's not working");
-        }
+        
 
         
     }
