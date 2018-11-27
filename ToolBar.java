@@ -9,9 +9,8 @@ import javax.swing.*;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
@@ -27,14 +26,8 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  *
@@ -53,6 +46,7 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
     private FileExplorerWindow file_explorer_window;
     public File soundFile;
     public ArrayList<File> tracks_list;
+    private Clip clip;
     
     public ToolBar(FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list){
         
@@ -78,19 +72,23 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        File soundFile = getTracksList().get(0);
-        Clip clip;
+    	
         if (e.getActionCommand().equals("play")){
-            try{
-                AudioInputStream sound = AudioSystem.getAudioInputStream(soundFile.getAbsoluteFile());
-                clip = AudioSystem.getClip();
-                clip.open(sound);
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
-            
+        	if (getTracksList().isEmpty()) {
+        		JOptionPane loaded_notification = new JOptionPane();
+                loaded_notification.showMessageDialog(this, "No Tracks to Play!");
+        	}
+        	try{
+            	File soundFile = getTracksList().get(0);
+                AudioInputStream sound;
+				sound = AudioSystem.getAudioInputStream(soundFile.getAbsoluteFile());
+				clip = AudioSystem.getClip();
+				clip.open(sound);
+	            clip.loop(Clip.LOOP_CONTINUOUSLY);
+				
             }
-            catch (Exception a){
-                System.out.println("Didn't work");
-            }
+        	catch(Exception excep){
+        	}
             
         }
         if (e.getActionCommand().equals("pause")){
@@ -100,6 +98,7 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
             
         }
         if (e.getActionCommand().equals("show")){
+        	System.out.println("SHOW ME");
             if (getFileExplorerWindow().isVisible()){
                 getFileExplorerWindow().setVisible(false);
             }
