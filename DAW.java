@@ -3,6 +3,7 @@ package daw;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.io.Serializable;
 import java.util.*;
 import java.util.*;
 import javax.swing.*;
@@ -26,8 +27,13 @@ import javax.swing.JMenuItem;
 DOCUMENTATION
 */
 
-public class DAW {
+public class DAW implements Serializable{
 
+	//We are required to implement this. This keeps track of the "version number" 
+	//so that if we update how an object is read or written, we can keep track of 
+	//what files are what version
+	private static final long serialVersionID = 0L;
+	
     public static void main(String[] args) {
         
         EventQueue.invokeLater(
@@ -49,6 +55,12 @@ public class DAW {
 
                 }
             );
+        
+        //When closed:
+        //write out this as an object to a file! using object input/output streams
+        //Implement method writeObject
+        //Implement method readObject
+        //Implement method redObjectNoData
         
     }
     
