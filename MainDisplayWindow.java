@@ -10,11 +10,6 @@ import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URL;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 /**
  *
@@ -30,10 +25,18 @@ DOCUMENTATION
 
 public class MainDisplayWindow extends JPanel {
     
-    public MainDisplayWindow() {
+	public ProgramFrame program_frame;
+	
+    public MainDisplayWindow(ProgramFrame program_frame) {
         
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(BorderFactory.createLineBorder(Color.black));
+        
+        //addAudioFile();
+        
+        
+        
+        /*
         //When New... is clicked on
         AudioDisplayContainer new_audio_display_container = new AudioDisplayContainer();
         AudioDisplayContainer new_audio_display_container2 = new AudioDisplayContainer();
@@ -44,9 +47,25 @@ public class MainDisplayWindow extends JPanel {
 
         add(new_audio_display_container);
         add(new_audio_display_container2);
-        
-        
+        */
+       
     }
     
+    void addAudioFile() {
+    	
+    	AudioDisplayContainer boop = new AudioDisplayContainer();
+    	boop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
+    	add(boop);
+    	revalidate();
+    	repaint();
+    }
     
+    void setProgramFrame(ProgramFrame other) {
+    	program_frame = other;
+    }
+    
+    ProgramFrame getProgramFrame() {
+    	return program_frame;
+    }
+
 }
