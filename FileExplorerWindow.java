@@ -33,16 +33,20 @@ DOCUMENTATION
 public class FileExplorerWindow extends JFileChooser implements ActionListener {
     
     public ArrayList<File> tracks_list;
+    public AudioDisplayContainer hhh = new AudioDisplayContainer();
     
-    public FileExplorerWindow(ArrayList<File> tracks_list) {
+    public FileExplorerWindow(MainDisplayWindow main_display_window, ArrayList<File> tracks_list) {
         
         setBorder(BorderFactory.createLineBorder(Color.yellow));
         setTracksList(tracks_list);
         //setCurrentDirectory(new File ("/home/opdada01/Music"));
-        setCurrentDirectory(new File ("/home/opdada01/NetBeansProjects/DAW/sounds"));
+        String userDir = System.getProperty("user.home");
+        //setCurrentDirectory(new File ("/home/opdada01/NetBeansProjects/DAW/sounds"));
+        setCurrentDirectory(new File (userDir));
         FileNameExtensionFilter filter = new FileNameExtensionFilter(null, "wav");
         setFileFilter(filter);
         addActionListener(this);
+        
         
         
                

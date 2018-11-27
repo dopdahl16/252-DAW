@@ -30,8 +30,11 @@ DOCUMENTATION
 
 public class MenuBar extends JMenuBar implements ActionListener{
     
-    public MenuBar() {
+	MainDisplayWindow main_display_window;
+	
+    public MenuBar(MainDisplayWindow main_display_window) {
         
+    	setMainDisplayWindow(main_display_window);
         JMenu file_menu, edit_menu, view_menu, track_menu, effect_menu;
         JMenuItem new_item, open_item, save_item;
         JMenuItem cut_item, paste_item, delete_item;
@@ -93,7 +96,9 @@ public class MenuBar extends JMenuBar implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("New...")){
-            
+        	getMainDisplayWindow().addAudioFile();
+        	//It is added, but does not show up until the window is resized... repaint seems not to work
+        	System.out.println("WADSFAW");
         }
         if (e.getActionCommand().equals("Open...")){
             
@@ -131,4 +136,11 @@ public class MenuBar extends JMenuBar implements ActionListener{
         
     }
     
+    MainDisplayWindow getMainDisplayWindow(){
+        return main_display_window;
+    }
+    
+    void setMainDisplayWindow(MainDisplayWindow other) {
+    	main_display_window = other;
+    }
 }
