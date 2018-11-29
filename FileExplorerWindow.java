@@ -33,10 +33,11 @@ DOCUMENTATION
 public class FileExplorerWindow extends JFileChooser implements ActionListener {
     
     public ArrayList<File> tracks_list;
-    public AudioDisplayContainer hhh = new AudioDisplayContainer();
+    public MainDisplayWindow main_display_window;
     
     public FileExplorerWindow(MainDisplayWindow main_display_window, ArrayList<File> tracks_list) {
         
+    	setMainDisplayWindow(main_display_window);
         setBorder(BorderFactory.createLineBorder(Color.yellow));
         setTracksList(tracks_list);
         //setCurrentDirectory(new File ("/home/opdada01/Music"));
@@ -59,12 +60,21 @@ public class FileExplorerWindow extends JFileChooser implements ActionListener {
     void setTracksList(ArrayList<File> other){
         tracks_list = other;
     }
+    
+    MainDisplayWindow getMainDisplayWindow(){
+        return main_display_window;
+    }
+    
+    void setMainDisplayWindow(MainDisplayWindow other) {
+    	main_display_window = other;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand() == "ApproveSelection"){
             if (!(getTracksList().contains(getSelectedFile()))){
                 getTracksList().add(getSelectedFile());
+                getMainDisplayWindow().addAudioFile(tracks_list);
                 System.out.println(".wav file:" + getSelectedFile() + " loaded into program");
                 JOptionPane loaded_notification = new JOptionPane();
                 loaded_notification.showMessageDialog(this, ".wav file: \"" + getSelectedFile().getName() + "\" loaded into program");
