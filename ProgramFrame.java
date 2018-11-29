@@ -38,13 +38,9 @@ class ProgramFrame extends JFrame
         setTitle(OUR_TITLE);
         setLayout(new GridBagLayout());
         
-        //This is just a sample addition to tracks_list so the toolbar has something to play
-        File jjj = new File("src/data/pet_sounds.wav");
-        tracks_list.add(jjj);
-        
-        MainDisplayWindow our_main_display_window = new MainDisplayWindow();
-        FileExplorerWindow our_file_explorer_window = new FileExplorerWindow();
-        MenuBar our_menu_bar = new MenuBar();
+        MainDisplayWindow our_main_display_window = new MainDisplayWindow(this, tracks_list);
+        FileExplorerWindow our_file_explorer_window = new FileExplorerWindow(our_main_display_window, tracks_list);
+        MenuBar our_menu_bar = new MenuBar(our_main_display_window);
         ToolBar our_tool_bar = new ToolBar(our_file_explorer_window, tracks_list);
         
         GridBagConstraints menuBarConstraints = new GridBagConstraints();
