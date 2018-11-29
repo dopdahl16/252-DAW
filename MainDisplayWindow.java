@@ -26,9 +26,11 @@ DOCUMENTATION
 public class MainDisplayWindow extends JPanel {
     
 	public ProgramFrame program_frame;
+	public ArrayList<File> tracks_list;
 	
-    public MainDisplayWindow(ProgramFrame program_frame) {
+    public MainDisplayWindow(ProgramFrame program_frame, ArrayList<File> tracks_list) {
         
+    	setTracksList(tracks_list);
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(BorderFactory.createLineBorder(Color.black));
         
@@ -51,11 +53,11 @@ public class MainDisplayWindow extends JPanel {
        
     }
     
-    void addAudioFile() {
+    void addAudioFile(ArrayList<File> tracks_list) {
     	
-    	AudioDisplayContainer boop = new AudioDisplayContainer();
-    	boop.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
-    	add(boop);
+    	AudioDisplayContainer new_container = new AudioDisplayContainer(getTracksList());
+    	new_container.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
+    	add(new_container);
     	revalidate();
     	repaint();
     }
@@ -66,6 +68,13 @@ public class MainDisplayWindow extends JPanel {
     
     ProgramFrame getProgramFrame() {
     	return program_frame;
+    }
+    ArrayList<File> getTracksList(){
+        return tracks_list;
+    }
+    
+    void setTracksList(ArrayList<File> other){
+        tracks_list = other;
     }
 
 }

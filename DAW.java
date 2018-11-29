@@ -32,6 +32,7 @@ public class DAW implements Serializable{
 	//We are required to implement this. This keeps track of the "version number" 
 	//so that if we update how an object is read or written, we can keep track of 
 	//what files are what version
+	
 	private static final long serialVersionID = 0L;
 	
     public static void main(String[] args) {
@@ -65,3 +66,10 @@ public class DAW implements Serializable{
     }
     
 }
+/*
+GENERAL TO DO BEFORE FINAL TURN IN:
+Remove unnecessary imports
+Make sure all try-catch blocks are in order
+Commentation
+Indentation and perfect white space
+*/
