@@ -17,7 +17,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.sound.sampled.*;
 
-
 /**
  *
  * @author opdada01 Daniel Opdahl
@@ -32,19 +31,24 @@ DOCUMENTATION
 
 public class AudioDisplayContainer extends JPanel implements ActionListener{
     
-    public AudioDisplayContainer (){
+	public ArrayList<File> tracks_list;
+	public int track_number = 0;
+	
+    public AudioDisplayContainer (ArrayList<File> tracks_list){
         
+    	setTracksList(tracks_list);
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.green));
         setMinimumSize(new Dimension(500,10));
         
         AudioFileVisualDisplay audio_file_display = new AudioFileVisualDisplay();
-        AudioFileInfo audio_file_info = new AudioFileInfo();
+        AudioFileInfo audio_file_info = new AudioFileInfo(getTracksList());
         
         add(audio_file_info, BorderLayout.LINE_START);
         add(audio_file_display, BorderLayout.LINE_END);
         
-        
+        //use track numbers to keep track of which is which?
+        track_number = track_number + 1;
 
         
     }
@@ -54,4 +58,11 @@ public class AudioDisplayContainer extends JPanel implements ActionListener{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    ArrayList<File> getTracksList(){
+        return tracks_list;
+    }
+    
+    void setTracksList(ArrayList<File> other){
+        tracks_list = other;
+    }
 }
