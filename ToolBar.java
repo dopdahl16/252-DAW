@@ -38,28 +38,24 @@ import javax.swing.JMenuItem;
 DOCUMENTATION
 */
 
-
+//NEED TO SET EXCEPTIONS, Need to implement resuming upon pausing 
 
 public class ToolBar extends JToolBar implements ActionListener, KeyListener{
     
-    private AudioInputStream sound;
-    private DataLine.Info info;
-    private Clip sounds;
+    private AudioInputStream our_audio_stream;
+    private Clip our_clip;
     private AudioFormat format;
-    private Long currentFrame;
+    private Long currentPosition;
     private String status;
-    
     private FileExplorerWindow file_explorer_window;
     public File soundFile;
     public ArrayList<File> tracks_list;
-    private Clip clip;    
     
     public ToolBar(FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list){
         
         setFloatable(false);
         setFileExplorerWindow(file_explorer_window);
         setTracksList(tracks_list);
-        
         
         JButton play, pause, stop, showFileExplorer;
         
@@ -73,21 +69,6 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
         add(stop);
         add(showFileExplorer);
         
-        if (!getTracksList().isEmpty()) {
-        	setFile(getTracksList().get(0));
-        }
-        setAudioInputStream(soundFile);
-        setInfo(sound);
-        setClip(info);
-        
-        try {
-            sounds.open(sound);
-        } catch (LineUnavailableException ex) {
-            Logger.getLogger(ToolBar.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ToolBar.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
     }
 
     @Override
@@ -99,26 +80,42 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
                 loaded_notification.showMessageDialog(this, "No Tracks to Play!");
         	}
         	try{
-            	File soundFile = getTracksList().get(0);
-                AudioInputStream sound;
-				sound = AudioSystem.getAudioInputStream(soundFile.getAbsoluteFile());
-				clip = AudioSystem.getClip();
-				clip.open(sound);
-	            clip.loop(Clip.LOOP_CONTINUOUSLY);
-				
+        		if(status == "paused") {
+        			our_clip.setMicrosecondPosition(currentPosition);
+        			our_clip.start();
+        		}
+        		else {
+	        		setFile(getTracksList().get(0));
+	        		setAudioInputStream(soundFile);
+	        		setClip(AudioSystem.getClip());
+	        		our_clip.open(our_audio_stream);
+	        		our_clip.start();
+        		}
+        		
+        		status = "";
+        		
             }
+        	
         	catch(Exception excep){
+        		
         	}
             
         }
 
         if (e.getActionCommand().equals("pause")){
-           sounds.stop();
-          sounds.setMicrosecondPosition(0);
+          our_clip.stop();
+          currentPosition = our_clip.getMicrosecondPosition();
+          status = "paused";
+          
         }
+        
+        if (e.getActionCommand().equals("stop")){
+           our_clip.stop();
+           our_clip.setMicrosecondPosition(0);
+           status = "";
+         }
 
         if (e.getActionCommand().equals("show")){
-        	System.out.println("SHOW ME");
             if (getFileExplorerWindow().isVisible()){
                 getFileExplorerWindow().setVisible(false);
             }
@@ -158,31 +155,29 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
         button.setActionCommand(actionCommand);
         button.addActionListener(this);
  
-        if (img_file.exists()) {                      //image found
-            
+        if (img_file.exists()) {
             button.setIcon(img_ico);
-        } else {                                     //no image found
+        } else {
             button.setText(altText);
             System.err.println("Resource not found: " + img_string);
         }
  
         return button;
+        
     }
+    
     //Accessors
+    
     private File getFile(){
         return soundFile;
     }
     
     private AudioInputStream getAudioInputStream(){
-        return sound;
-    }
-    
-    private DataLine.Info getInfo(){
-        return info;
+        return our_audio_stream;
     }
     
     private Clip getClip(){
-        return sounds;
+        return our_clip;
     }
     
     private AudioFormat getFormat(){
@@ -191,28 +186,24 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
     
     //Mutators
     
-    private void setFile(File index){
-        soundFile = index;
+    private void setFile(File other){
+        soundFile = other;
     }
     
     private void setAudioInputStream(File other){
        try{
-        sound = AudioSystem.getAudioInputStream(other);
+        our_audio_stream = AudioSystem.getAudioInputStream(other);
        }
-       catch(Exception e){
-           System.out.println("sorry");
+       catch(Exception excep){
+           
        }
     }
     
-    private void setInfo(AudioInputStream other){
-        info = new DataLine.Info(Clip.class, other.getFormat());
-    }
-    
-    private void setClip(DataLine.Info other){
+    private void setClip(Clip other){
         try {
-            sounds = (Clip) AudioSystem.getLine(other);
-        } catch (LineUnavailableException ex) {
-            Logger.getLogger(ToolBar.class.getName()).log(Level.SEVERE, null, ex);
+            our_clip = other;
+        } catch (Exception excep) {
+            
         }
     }
     
