@@ -32,16 +32,17 @@ class ProgramFrame extends JFrame
     
     private static final String OUR_TITLE = "DAW";
     public ArrayList<File> tracks_list = new ArrayList<File>();
+    public int current_track;
 
     public ProgramFrame()
     {
         setTitle(OUR_TITLE);
         setLayout(new GridBagLayout());
         
-        MainDisplayWindow our_main_display_window = new MainDisplayWindow(this, tracks_list);
-        FileExplorerWindow our_file_explorer_window = new FileExplorerWindow(our_main_display_window, tracks_list);
-        MenuBar our_menu_bar = new MenuBar(our_main_display_window);
-        ToolBar our_tool_bar = new ToolBar(our_file_explorer_window, tracks_list);
+        MainDisplayWindow our_main_display_window = new MainDisplayWindow(this, tracks_list, current_track);
+        FileExplorerWindow our_file_explorer_window = new FileExplorerWindow(our_main_display_window, tracks_list, current_track);
+        MenuBar our_menu_bar = new MenuBar(our_main_display_window, tracks_list, current_track);
+        ToolBar our_tool_bar = new ToolBar(our_main_display_window, our_file_explorer_window, tracks_list);
         
         GridBagConstraints menuBarConstraints = new GridBagConstraints();
         GridBagConstraints toolBarConstraints = new GridBagConstraints();

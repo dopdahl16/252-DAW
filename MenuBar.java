@@ -3,6 +3,7 @@ package daw;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.io.File;
 import java.util.*;
 import java.util.*;
 import javax.swing.*;
@@ -28,13 +29,19 @@ import javax.swing.event.MenuListener;
 DOCUMENTATION
 */
 
+///Fix the current_track parameter according to git comment
+
 public class MenuBar extends JMenuBar implements ActionListener{
     
 	MainDisplayWindow main_display_window;
+	ArrayList<File> tracks_list;
+	public int current_track;
 	
-    public MenuBar(MainDisplayWindow main_display_window) {
+    public MenuBar(MainDisplayWindow main_display_window, ArrayList<File> tracks_list, int current_track) {
         
     	setMainDisplayWindow(main_display_window);
+    	setTracksList(tracks_list);
+    	setCurrentTrack(current_track);
         JMenu file_menu, edit_menu, view_menu, track_menu, effect_menu;
         JMenuItem new_item, open_item, save_item;
         JMenuItem cut_item, paste_item, delete_item;
@@ -96,9 +103,8 @@ public class MenuBar extends JMenuBar implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("New...")){
-        	getMainDisplayWindow().addAudioFile();
-        	//It is added, but does not show up until the window is resized... repaint seems not to work
-        	System.out.println("WADSFAW");
+        	//getMainDisplayWindow().addAudioFile();
+        	//Create blank .wav file??? Or write empty argument constructor for addAudioFile()
         }
         if (e.getActionCommand().equals("Open...")){
             
@@ -142,5 +148,20 @@ public class MenuBar extends JMenuBar implements ActionListener{
     
     void setMainDisplayWindow(MainDisplayWindow other) {
     	main_display_window = other;
+    }
+    
+    ArrayList<File> getTracksList(){
+        return tracks_list;
+    }
+    
+    void setTracksList(ArrayList<File> other){
+        tracks_list = other;
+    }
+    int getCurrentTrack(){
+        return current_track;
+    }
+    
+    void setCurrentTrack(int other){
+        current_track = other;
     }
 }

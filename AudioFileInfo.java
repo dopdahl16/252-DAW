@@ -36,23 +36,33 @@ import javax.swing.JMenuItem;
 DOCUMENTATION
 */
 
+
+///ADD A DELETE BUTTON WITH A POP-UP MENU THAT ASKS IF YOU REALLY DO WANT TO REMOVE THE TRACK
+///ADD A SAVE BUTTON
+///ADD BACKGROUND COLOR CHANGER TO SIGNIFY WHICH TRACK IS CURRENTLY SELECTED
+
+
+
 public class AudioFileInfo extends JPanel implements ActionListener{
     
-	public ArrayList<File> tracks_list;
+	public File track;
+	public MainDisplayWindow main_display_window;
 	
-    AudioFileInfo(ArrayList<File> tracks_list) {
+    AudioFileInfo(MainDisplayWindow main_display_window, File track) {
         
-    	setTracksList(tracks_list);
+    	setTrack(track);
+    	setMainDisplayWindow(main_display_window);
         setBorder(BorderFactory.createLineBorder(Color.red));
         setPreferredSize(new Dimension(200,50));
         JLabel file_name = new JLabel();
         JLabel file_size = new JLabel();
         JLabel file_duration = new JLabel();
-        file_name.setText(getTracksList().get(0).getName());
-        file_size.setText("Size: " + Long.toString(getTracksList().get(0).length()) + " bytes");
+        JButton select_button = new JButton();
+        file_name.setText(getTrack().getName());
+        file_size.setText("Size: " + Long.toString(getTrack().length()) + " bytes");
         AudioInputStream audioInputStream = null;
 		try {
-			audioInputStream = AudioSystem.getAudioInputStream(getTracksList().get(0));
+			audioInputStream = AudioSystem.getAudioInputStream(getTrack());
 		} catch (UnsupportedAudioFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,23 +75,34 @@ public class AudioFileInfo extends JPanel implements ActionListener{
         double duration = (frames+0.0) / format.getFrameRate();
         DecimalFormat numberFormat = new DecimalFormat("#.00");
         file_duration.setText("Duration: " + numberFormat.format(duration) + " seconds");
+        select_button.setActionCommand("SELECT");
+        select_button.setText("SELECT");
+        select_button.addActionListener(this);
         add(file_name);
         add(file_size);
         add(file_duration);
-        
+        add(select_button);
         
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    	if (e.getActionCommand().equals("SELECT")){
+    		getMainDisplayWindow().selectTrack(getTrack());
+    	}
     }
-    ArrayList<File> getTracksList(){
-        return tracks_list;
-    }
-    
-    void setTracksList(ArrayList<File> other){
-        tracks_list = other;
+    File getTrack(){
+        return track;
     }
     
+    void setTrack(File other){
+        track = other;
+    }
+    MainDisplayWindow getMainDisplayWindow(){
+        return main_display_window;
+    }
+    
+    void setMainDisplayWindow(MainDisplayWindow other){
+        main_display_window = other;
+    }
 }

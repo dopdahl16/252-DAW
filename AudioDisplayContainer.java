@@ -31,24 +31,22 @@ DOCUMENTATION
 
 public class AudioDisplayContainer extends JPanel implements ActionListener{
     
-	public ArrayList<File> tracks_list;
-	public int track_number = 0;
+	public File track;
+	public MainDisplayWindow main_display_window;
 	
-    public AudioDisplayContainer (ArrayList<File> tracks_list){
+    public AudioDisplayContainer(MainDisplayWindow main_display_window, File track){
         
-    	setTracksList(tracks_list);
+    	setTrack(track);
+    	setMainDisplayWindow(main_display_window);
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(Color.green));
         setMinimumSize(new Dimension(500,10));
         
         AudioFileVisualDisplay audio_file_display = new AudioFileVisualDisplay();
-        AudioFileInfo audio_file_info = new AudioFileInfo(getTracksList());
+        AudioFileInfo audio_file_info = new AudioFileInfo(getMainDisplayWindow(), getTrack());
         
         add(audio_file_info, BorderLayout.LINE_START);
         add(audio_file_display, BorderLayout.LINE_END);
-        
-        //use track numbers to keep track of which is which?
-        track_number = track_number + 1;
 
         
     }
@@ -58,11 +56,18 @@ public class AudioDisplayContainer extends JPanel implements ActionListener{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    ArrayList<File> getTracksList(){
-        return tracks_list;
+    File getTrack(){
+        return track;
     }
     
-    void setTracksList(ArrayList<File> other){
-        tracks_list = other;
+    void setTrack(File other){
+        track = other;
+    }
+    MainDisplayWindow getMainDisplayWindow(){
+        return main_display_window;
+    }
+    
+    void setMainDisplayWindow(MainDisplayWindow other){
+        main_display_window = other;
     }
 }
