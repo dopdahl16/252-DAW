@@ -50,12 +50,14 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
     private FileExplorerWindow file_explorer_window;
     public File soundFile;
     public ArrayList<File> tracks_list;
+    public MainDisplayWindow main_display_window;
     
-    public ToolBar(FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list){
+    public ToolBar(MainDisplayWindow main_display_window, FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list){
         
         setFloatable(false);
         setFileExplorerWindow(file_explorer_window);
         setTracksList(tracks_list);
+        setMainDisplayWindow(main_display_window);
         
         JButton play, pause, stop, showFileExplorer;
         
@@ -85,8 +87,8 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
         			our_clip.start();
         		}
         		else {
-	        		setFile(getTracksList().get(0));
-	        		setAudioInputStream(soundFile);
+	        		setFile(getTracksList().get(getMainDisplayWindow().getCurrentTrack()));
+	        		setAudioInputStream(getFile());
 	        		setClip(AudioSystem.getClip());
 	        		our_clip.open(our_audio_stream);
 	        		our_clip.start();
@@ -148,7 +150,7 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
         String img_string = "src/data/images/" + imageName;
         ImageIcon img_ico = new ImageIcon(img_string, altText);
         Image image = img_ico.getImage();
-        Image newimg = image.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way  
+        Image newimg = image.getScaledInstance(40, 40,  java.awt.Image.SCALE_SMOOTH);
         img_ico = new ImageIcon(newimg); 
         
         JButton button = new JButton();
@@ -223,4 +225,11 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
         tracks_list = other;
     }
             
+    MainDisplayWindow getMainDisplayWindow(){
+        return main_display_window;
+    }
+    
+    void setMainDisplayWindow(MainDisplayWindow other){
+        main_display_window = other;
+    }
 }
