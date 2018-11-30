@@ -29,6 +29,8 @@ import javax.swing.event.MenuListener;
 DOCUMENTATION
 */
 
+///Fix the current_track parameter according to git comment
+
 public class MenuBar extends JMenuBar implements ActionListener{
     
 	MainDisplayWindow main_display_window;
