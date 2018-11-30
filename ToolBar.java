@@ -176,7 +176,17 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
     
     private AudioInputStream getAudioInputStream(){
         return our_audio_stream;
+
     }
+    
+    private void setAudioInputStream(File other){
+        try{
+         our_audio_stream = AudioSystem.getAudioInputStream(other);
+        }
+        catch(Exception excep){
+            
+        }
+     }
     
     private Clip getClip(){
         return our_clip;
@@ -192,14 +202,7 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
         soundFile = other;
     }
     
-    private void setAudioInputStream(File other){
-       try{
-        our_audio_stream = AudioSystem.getAudioInputStream(other);
-       }
-       catch(Exception excep){
-           
-       }
-    }
+    
     
     private void setClip(Clip other){
         try {
