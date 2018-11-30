@@ -9,11 +9,7 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
+
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
@@ -29,19 +25,15 @@ import javax.swing.event.MenuListener;
 DOCUMENTATION
 */
 
-///Fix the current_track parameter according to git comment
-
 public class MenuBar extends JMenuBar implements ActionListener{
     
 	MainDisplayWindow main_display_window;
 	ArrayList<File> tracks_list;
-	public int current_track;
 	
-    public MenuBar(MainDisplayWindow main_display_window, ArrayList<File> tracks_list, int current_track) {
+    public MenuBar(MainDisplayWindow main_display_window, ArrayList<File> tracks_list) {
         
     	setMainDisplayWindow(main_display_window);
     	setTracksList(tracks_list);
-    	setCurrentTrack(current_track);
         JMenu file_menu, edit_menu, view_menu, track_menu, effect_menu;
         JMenuItem new_item, open_item, save_item;
         JMenuItem cut_item, paste_item, delete_item;
@@ -128,7 +120,13 @@ public class MenuBar extends JMenuBar implements ActionListener{
             
         }
         if (e.getActionCommand().equals("Adjust Amplitude")){
-            
+        	if (getTracksList().isEmpty()) {
+        		JOptionPane loaded_notification = new JOptionPane();
+                loaded_notification.showMessageDialog(this, "No Tracks to Edit!");
+        	}
+        	else {
+            	getMainDisplayWindow().adjustAmplitude(0.5);
+        	}
         }
         if (e.getActionCommand().equals("Normalize")){
             
@@ -157,11 +155,5 @@ public class MenuBar extends JMenuBar implements ActionListener{
     void setTracksList(ArrayList<File> other){
         tracks_list = other;
     }
-    int getCurrentTrack(){
-        return current_track;
-    }
     
-    void setCurrentTrack(int other){
-        current_track = other;
-    }
 }
