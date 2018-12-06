@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -28,9 +29,9 @@ import javax.swing.JMenuItem;
 DOCUMENTATION
 */
 
-public class AudioFileVisualDisplay extends JPanel implements ActionListener{
+public class AudioFileVisualDisplay extends JPanel implements ActionListener {
     
-    AudioFileVisualDisplay() {
+    public AudioFileVisualDisplay() {
         
         setBorder(BorderFactory.createLineBorder(Color.blue));
         setPreferredSize(new Dimension(Integer.MAX_VALUE,100));
