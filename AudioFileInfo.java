@@ -15,6 +15,7 @@ import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.text.DecimalFormat;
 
@@ -43,12 +44,12 @@ DOCUMENTATION
 
 
 
-public class AudioFileInfo extends JPanel implements ActionListener{
+public class AudioFileInfo extends JPanel implements ActionListener {
     
 	public File track;
 	public MainDisplayWindow main_display_window;
 	
-    AudioFileInfo(MainDisplayWindow main_display_window, File track) {
+    public AudioFileInfo(MainDisplayWindow main_display_window, File track) {
         
     	setTrack(track);
     	setMainDisplayWindow(main_display_window);
