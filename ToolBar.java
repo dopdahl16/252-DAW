@@ -4,12 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.*;
 import javax.swing.*;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,19 +42,20 @@ DOCUMENTATION
 
 //NEED TO SET EXCEPTIONS, Need to implement resuming upon pausing 
 
-public class ToolBar extends JToolBar implements ActionListener, KeyListener{
+public class ToolBar extends JToolBar implements ActionListener {
     
     private AudioInputStream our_audio_stream;
     private Clip our_clip;
     private AudioFormat format;
-    private Long currentPosition;
+    public Long currentPosition;
     private String status;
     private FileExplorerWindow file_explorer_window;
     public File soundFile;
     public ArrayList<File> tracks_list;
     public MainDisplayWindow main_display_window;
+    public SaveState save_state;
     
-    public ToolBar(MainDisplayWindow main_display_window, FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list){
+    public ToolBar(MainDisplayWindow main_display_window, FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list, SaveState save_state) {
         
         setFloatable(false);
         setFileExplorerWindow(file_explorer_window);
@@ -80,21 +83,27 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
         	if (getTracksList().isEmpty()) {
         		JOptionPane loaded_notification = new JOptionPane();
                 loaded_notification.showMessageDialog(this, "No Tracks to Play!");
+                status = "";
         	}
         	try{
         		if(status == "paused") {
         			our_clip.setMicrosecondPosition(currentPosition);
+        			getSaveState().setCurrentPosition(our_clip.getMicrosecondPosition());
         			our_clip.start();
+        			status = "playing";
         		}
         		else {
 	        		setFile(getTracksList().get(getMainDisplayWindow().getCurrentTrack()));
 	        		setAudioInputStream(getFile());
+	        		if (status == "playing") {
+	        			our_clip.stop();
+	        			TimeUnit.MILLISECONDS.sleep(10);
+	        		}
 	        		setClip(AudioSystem.getClip());
 	        		our_clip.open(our_audio_stream);
 	        		our_clip.start();
+	        		status = "playing";
         		}
-        		
-        		status = "";
         		
             }
         	
@@ -129,21 +138,6 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
       
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
     protected JButton makeButton(String imageName, String actionCommand, String altText) {
         
         File img_file = new File("src/data/images/" + imageName);
@@ -234,5 +228,13 @@ public class ToolBar extends JToolBar implements ActionListener, KeyListener{
     
     void setMainDisplayWindow(MainDisplayWindow other){
         main_display_window = other;
+    }
+    
+    SaveState getSaveState() {
+		return save_state;
+    }
+    
+    void setSaveState(SaveState other) {
+    	save_state = other;
     }
 }
