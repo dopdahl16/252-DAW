@@ -36,6 +36,7 @@ public class FileExplorerWindow extends JFileChooser implements ActionListener {
     public ArrayList<File> tracks_list;
     public MainDisplayWindow main_display_window;
     public int current_track;
+    public transient FileNameExtensionFilter filter;
     
     public FileExplorerWindow(MainDisplayWindow main_display_window, ArrayList<File> tracks_list, int current_track) {
         
@@ -100,4 +101,3 @@ public class FileExplorerWindow extends JFileChooser implements ActionListener {
     }
     
 }
-

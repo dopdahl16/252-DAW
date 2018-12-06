@@ -16,13 +16,16 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.awt.EventQueue;
-import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  *
@@ -44,10 +47,10 @@ public class MainDisplayWindow extends JPanel {
 	public int track_index;
 	public int current_track;
 	private AudioInputStream our_audio_stream;
-    private Clip our_clip;
-    private AudioFormat format;
-    private Long currentPosition;
-    private String status;
+    //private Clip our_clip;
+    //private AudioFormat format;
+    //private Long currentPosition;
+    //private String status;
 	//	track_index is for creating the audio files in AudioDisplayContainer,AudioFileInfo, and AudioFileVisualDisplay only
 	//	current_track is for playback purposes ONLY
 	
@@ -58,7 +61,7 @@ public class MainDisplayWindow extends JPanel {
     	setCurrentTrack(current_track);
         setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
         setBorder(BorderFactory.createLineBorder(Color.black));
-       
+        
     }
     
     void addAudioFile(int track_index) {
@@ -68,8 +71,17 @@ public class MainDisplayWindow extends JPanel {
     	add(new_container);
     	revalidate();
     	repaint();
+    	
+    	
+    	
+    	
+		
+		
+		
+		
     }
     
+   
     void selectTrack(File selected_track) {
     	setCurrentTrack(getTracksList().indexOf(selected_track));
     	System.out.println("Track: " + selected_track.getName() + " selected");
@@ -79,9 +91,11 @@ public class MainDisplayWindow extends JPanel {
     	File current_file = getTracksList().get(getCurrentTrack());
     	//setAudioInputStream(getTracksList().get(getCurrentTrack()));
     	//AudioInputStream stream = our_audio_stream;
+    	scaling_ratio = 0.5;
     	
     	try {
 			AudioInputStream in_stream = AudioSystem.getAudioInputStream(current_file);
+			Short sample = 0;
 			
 			int max_length = 5000000;
 			int length = in_stream.available();
@@ -89,11 +103,58 @@ public class MainDisplayWindow extends JPanel {
 				length = max_length;
 			}
 			
+			
+			//read bytes as shorts - in book 48
 			byte [] byte_stream = new byte [length];
 			in_stream.read(byte_stream, 0, length);
 			int i;
-			for (i=0; i<byte_stream.length; i++) {
-				byte_stream[i] = (byte) (byte_stream[i] * scaling_ratio);
+			for (i=0; i<byte_stream.length; i = i+2) {
+				byte b1 = byte_stream[i];
+				byte b2 = byte_stream[i+1];
+				
+				System.out.println("BYTES: " + b1 + " " + b2);
+				System.out.println("BYTES binary: " + Integer.toBinaryString(b1) + " " + Integer.toBinaryString(b2));
+				short res = (short) Integer.parseInt(Integer.toBinaryString(b1), 2);
+				System.out.println("BYTES TRIAL: " + res);
+				
+				ByteBuffer bb = ByteBuffer.allocate(2);
+				bb.order(ByteOrder.LITTLE_ENDIAN);
+				bb.put(b1);
+				bb.put(b2);
+				sample = bb.getShort(0);
+				
+				
+				/*
+				
+				
+				sample = (((short)(((((int)b2)|0xff)<<8)|(((int)b1)|0xff))));
+				
+				
+				*/
+				
+				System.out.println("SHORT PRE_EDIT: " + sample);
+				
+				
+				int jjj = (int) sample;
+				
+				System.out.println("SHORT TO INT: " + jjj);
+				
+				jjj = (int) (jjj * scaling_ratio);
+				
+				System.out.println("Culprit?: " + jjj);
+				
+				sample = (short) jjj;
+				
+				System.out.println("SHORT post_EDIT: " + sample);
+				
+				b1 = (byte) (sample & 0xff);
+				b2 = (byte) ((sample >> 8) & 0xff);
+				
+				System.out.println("BYTES 2         : " + b1 + " " + b2);
+				System.out.println(" ");
+				
+				byte_stream[i] = b1;
+				byte_stream[i+1] = b2;
 			}
 		
 			ByteArrayInputStream b_in = new ByteArrayInputStream(byte_stream);
@@ -109,6 +170,7 @@ public class MainDisplayWindow extends JPanel {
 	        AudioInputStream stream = new AudioInputStream(b_in, format, byte_stream.length);
 	        File file = new File("C:\\\\Users\\\\dopda\\\\Downloads\\\\WWW\\\\bbb.wav");
 	        AudioSystem.write(stream, Type.WAVE, file);
+	        System.out.println("Amp Adjusted");
 	        
 		} catch (UnsupportedAudioFileException | IOException e) {
 			// TODO Auto-generated catch block
@@ -116,8 +178,6 @@ public class MainDisplayWindow extends JPanel {
 		}
     	
     }
-    
-    
     
     
     
@@ -156,4 +216,5 @@ public class MainDisplayWindow extends JPanel {
             
         }
      }
+    
 }
