@@ -3,12 +3,18 @@ package daw;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.EventQueue;
-import java.awt.event.KeyEvent;
+
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -27,16 +33,12 @@ import javax.swing.JMenuItem;
 DOCUMENTATION
 */
 
-public class DAW implements Serializable{
-
-	//We are required to implement this. This keeps track of the "version number" 
-	//so that if we update how an object is read or written, we can keep track of 
-	//what files are what version
+public class DAW {
 	
-	private static final long serialVersionID = 0L;
+	public ProgramFrame frame;
 	
     public static void main(String[] args) {
-        
+    	
         EventQueue.invokeLater(
             new Runnable()
             {
@@ -44,8 +46,7 @@ public class DAW implements Serializable{
                 public void run()
                 {
 
-                    
-                    ProgramFrame frame = new ProgramFrame();
+                	ProgramFrame frame = new ProgramFrame();
 
                     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -57,12 +58,6 @@ public class DAW implements Serializable{
                 }
             );
         
-        //When closed:
-        //write out this as an object to a file! using object input/output streams
-        //Implement method writeObject
-        //Implement method readObject
-        //Implement method redObjectNoData
-        
     }
     
 }
@@ -72,4 +67,6 @@ Remove unnecessary imports
 Make sure all try-catch blocks are in order
 Commentation
 Indentation and perfect white space
+check public/private field declarations
+variable names in the 
 */
