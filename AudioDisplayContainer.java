@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -29,12 +30,12 @@ import javax.sound.sampled.*;
 DOCUMENTATION
 */
 
-public class AudioDisplayContainer extends JPanel implements ActionListener{
+public class AudioDisplayContainer extends JPanel implements ActionListener {
     
 	public File track;
 	public MainDisplayWindow main_display_window;
 	
-    public AudioDisplayContainer(MainDisplayWindow main_display_window, File track){
+    public AudioDisplayContainer(MainDisplayWindow main_display_window, File track) {
         
     	setTrack(track);
     	setMainDisplayWindow(main_display_window);
