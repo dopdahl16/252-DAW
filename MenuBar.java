@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.File;
+import java.io.Serializable;
 import java.util.*;
 import java.util.*;
 import javax.swing.*;
@@ -25,10 +26,10 @@ import javax.swing.event.MenuListener;
 DOCUMENTATION
 */
 
-public class MenuBar extends JMenuBar implements ActionListener{
+public class MenuBar extends JMenuBar implements ActionListener {
     
-	MainDisplayWindow main_display_window;
-	ArrayList<File> tracks_list;
+	public MainDisplayWindow main_display_window;
+	public ArrayList<File> tracks_list;
 	
     public MenuBar(MainDisplayWindow main_display_window, ArrayList<File> tracks_list) {
         
