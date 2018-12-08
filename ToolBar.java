@@ -2,31 +2,15 @@ package daw;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.*;
 import javax.swing.*;
-import java.awt.EventQueue;
-import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 /**
  *
@@ -55,12 +39,17 @@ public class ToolBar extends JToolBar implements ActionListener {
     public MainDisplayWindow main_display_window;
     public SaveState save_state;
     
-    public ToolBar(MainDisplayWindow main_display_window, FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list, SaveState save_state) {
+    public ToolBar(MainDisplayWindow main_display_window, FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list, Long initial_position) {
         
         setFloatable(false);
         setFileExplorerWindow(file_explorer_window);
         setTracksList(tracks_list);
         setMainDisplayWindow(main_display_window);
+        currentPosition = initial_position;
+        if (currentPosition > 0) {
+        	status = "paused";
+        }
+        System.out.println(currentPosition);
         
         JButton play, pause, stop, showFileExplorer;
         
@@ -79,7 +68,7 @@ public class ToolBar extends JToolBar implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
     	
-        if (e.getActionCommand().equals("play")){
+        if (e.getActionCommand().equals("play")) {
         	if (getTracksList().isEmpty()) {
         		JOptionPane loaded_notification = new JOptionPane();
                 loaded_notification.showMessageDialog(this, "No Tracks to Play!");
@@ -87,10 +76,39 @@ public class ToolBar extends JToolBar implements ActionListener {
         	}
         	try{
         		if(status == "paused") {
-        			our_clip.setMicrosecondPosition(currentPosition);
-        			getSaveState().setCurrentPosition(our_clip.getMicrosecondPosition());
-        			our_clip.start();
-        			status = "playing";
+        			if (our_clip == null) {
+        				
+        				setFile(getTracksList().get(getMainDisplayWindow().getCurrentTrack()));
+    	        		setAudioInputStream(getFile());
+    	        		setClip(AudioSystem.getClip());
+    	        		our_clip.open(our_audio_stream);
+    	        		our_clip.setMicrosecondPosition(currentPosition);
+    	        		our_clip.start();
+    	        		status = "playing";
+        				
+        				
+        				
+        			}
+        			else {
+        				System.out.println(getFile());
+        				System.out.println(getTracksList().get(getMainDisplayWindow().getCurrentTrack()));
+        				if (getFile() == getTracksList().get(getMainDisplayWindow().getCurrentTrack())) {
+        					System.out.println("SAME");
+        					our_clip.setMicrosecondPosition(currentPosition);
+    	        			//getSaveState().setCurrentPosition(our_clip.getMicrosecondPosition());
+    	        			our_clip.start();
+    	        			status = "playing";
+        				}
+        				else {
+        					System.out.println("DIFFERENT");
+        					setFile(getTracksList().get(getMainDisplayWindow().getCurrentTrack()));
+        	        		setAudioInputStream(getFile());
+        	        		setClip(AudioSystem.getClip());
+        	        		our_clip.open(our_audio_stream);
+        	        		our_clip.start();
+        	        		status = "playing";
+        				}
+        			}
         		}
         		else {
 	        		setFile(getTracksList().get(getMainDisplayWindow().getCurrentTrack()));
@@ -101,33 +119,46 @@ public class ToolBar extends JToolBar implements ActionListener {
 	        		}
 	        		setClip(AudioSystem.getClip());
 	        		our_clip.open(our_audio_stream);
+	        		//our_clip.setMicrosecondPosition(currentPosition);
 	        		our_clip.start();
 	        		status = "playing";
         		}
         		
             }
         	
-        	catch(Exception excep){
+        	catch(Exception excep) {
         		
         	}
             
         }
 
-        if (e.getActionCommand().equals("pause")){
-          our_clip.stop();
-          currentPosition = our_clip.getMicrosecondPosition();
-          status = "paused";
+        //THESE NEED TRY BLOCKS!!!!!!!!!!!!1
+        
+        if (e.getActionCommand().equals("pause")) {
+        	if (getTracksList().isEmpty()) {
+        		JOptionPane loaded_notification = new JOptionPane();
+                loaded_notification.showMessageDialog(this, "No Tracks to Pause!");
+                status = "";
+        	}
+            our_clip.stop();
+            currentPosition = our_clip.getMicrosecondPosition();
+            status = "paused";
           
         }
         
-        if (e.getActionCommand().equals("stop")){
-           our_clip.stop();
-           our_clip.setMicrosecondPosition(0);
-           status = "";
+        if (e.getActionCommand().equals("stop")) {
+        	if (getTracksList().isEmpty()) {
+        		JOptionPane loaded_notification = new JOptionPane();
+                loaded_notification.showMessageDialog(this, "No Tracks to Stop!");
+                status = "";
+        	}
+             our_clip.stop();
+             our_clip.setMicrosecondPosition(0);
+             status = "";
          }
 
-        if (e.getActionCommand().equals("show")){
-            if (getFileExplorerWindow().isVisible()){
+        if (e.getActionCommand().equals("show")) {
+            if (getFileExplorerWindow().isVisible()) {
                 getFileExplorerWindow().setVisible(false);
             }
             else{
@@ -164,41 +195,41 @@ public class ToolBar extends JToolBar implements ActionListener {
     
     //Accessors
     
-    private File getFile(){
+    private File getFile() {
         return soundFile;
     }
     
-    private AudioInputStream getAudioInputStream(){
+    private AudioInputStream getAudioInputStream() {
         return our_audio_stream;
 
     }
     
-    private void setAudioInputStream(File other){
+    private void setAudioInputStream(File other) {
         try{
          our_audio_stream = AudioSystem.getAudioInputStream(other);
         }
-        catch(Exception excep){
+        catch(Exception excep) {
             
         }
      }
     
-    private Clip getClip(){
+    public Clip getClip() {
         return our_clip;
     }
     
-    private AudioFormat getFormat(){
+    private AudioFormat getFormat() {
         return format;
     }
     
     //Mutators
     
-    private void setFile(File other){
+    private void setFile(File other) {
         soundFile = other;
     }
     
     
     
-    private void setClip(Clip other){
+    private void setClip(Clip other) {
         try {
             our_clip = other;
         } catch (Exception excep) {
@@ -206,27 +237,27 @@ public class ToolBar extends JToolBar implements ActionListener {
         }
     }
     
-    FileExplorerWindow getFileExplorerWindow(){
+    FileExplorerWindow getFileExplorerWindow() {
         return file_explorer_window;
     }
     
-    void setFileExplorerWindow(FileExplorerWindow other){
+    void setFileExplorerWindow(FileExplorerWindow other) {
         file_explorer_window = other;
     }
     
-    ArrayList<File> getTracksList(){
+    ArrayList<File> getTracksList() {
         return tracks_list;
     }
     
-    void setTracksList(ArrayList<File> other){
+    void setTracksList(ArrayList<File> other) {
         tracks_list = other;
     }
             
-    MainDisplayWindow getMainDisplayWindow(){
+    MainDisplayWindow getMainDisplayWindow() {
         return main_display_window;
     }
     
-    void setMainDisplayWindow(MainDisplayWindow other){
+    void setMainDisplayWindow(MainDisplayWindow other) {
         main_display_window = other;
     }
     

@@ -1,25 +1,8 @@
 package daw;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.util.*;
-import java.util.*;
-import javax.swing.*;
 import java.awt.EventQueue;
-
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 /**
  *
@@ -29,9 +12,8 @@ import javax.swing.JMenuItem;
  * 
  */
 
-/*
-DOCUMENTATION
-*/
+//The DAW class holds the main function. This class only creates and holds the ProgramFrame, which
+//could be described as our "true" main class.
 
 public class DAW {
 	
@@ -40,14 +22,15 @@ public class DAW {
     public static void main(String[] args) {
     	
         EventQueue.invokeLater(
-            new Runnable()
-            {
+            new Runnable() {
 
-                public void run()
-                {
+                public void run() {
 
                 	ProgramFrame frame = new ProgramFrame();
 
+                	//Here we set the closing operation and the default and minimum sizes
+                	//for our ProgramFrame
+                	
                     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     frame.setMinimumSize(new Dimension(800,500));
@@ -63,10 +46,12 @@ public class DAW {
 }
 /*
 GENERAL TO DO BEFORE FINAL TURN IN:
-Remove unnecessary imports
 Make sure all try-catch blocks are in order
 Commentation
 Indentation and perfect white space
 check public/private field declarations
 variable names in the 
+be more specific with custom catch blocks
+Comment punctuation - periods n shit
+Go over System.out 's 
 */

@@ -2,22 +2,10 @@ package daw;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
-import java.util.*;
 import java.util.*;
 import javax.swing.*;
-import java.awt.EventQueue;
-import java.awt.event.KeyEvent;
 import java.io.File;
-import java.net.URL;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.border.Border;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import static java.lang.Math.toIntExact;
 
 /**
  *
@@ -53,38 +41,41 @@ public class FileExplorerWindow extends JFileChooser implements ActionListener {
         addActionListener(this);
         
         
-        
                
     }
     
-    ArrayList<File> getTracksList(){
+    ArrayList<File> getTracksList() {
         return tracks_list;
     }
     
-    void setTracksList(ArrayList<File> other){
+    void setTracksList(ArrayList<File> other) {
         tracks_list = other;
     }
     
-    MainDisplayWindow getMainDisplayWindow(){
+    MainDisplayWindow getMainDisplayWindow() {
         return main_display_window;
     }
     
     void setMainDisplayWindow(MainDisplayWindow other) {
     	main_display_window = other;
     }
-    int getCurrentTrack(){
+    int getCurrentTrack() {
         return current_track;
     }
     
-    void setCurrentTrack(int other){
+    void setCurrentTrack(int other) {
         current_track = other;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand() == "ApproveSelection"){
-            if (!(getTracksList().contains(getSelectedFile()))){
+        if (e.getActionCommand() == "ApproveSelection") {
+            if (!(getTracksList().contains(getSelectedFile()))) {
                 getTracksList().add(getSelectedFile());
+                if (getTracksList().size() == 1) {
+                	getMainDisplayWindow().getProgramFrame().setCurrentTrack(getTracksList().indexOf(getSelectedFile()));
+                	System.out.println("Fist added");
+                }
                 getMainDisplayWindow().addAudioFile(getTracksList().indexOf(getSelectedFile()));
                 //setCurrentTrack(getTracksList().indexOf(getSelectedFile()));
                 System.out.println(".wav file: " + getSelectedFile() + " loaded into program");
