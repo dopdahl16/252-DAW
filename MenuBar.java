@@ -18,7 +18,6 @@ import javax.swing.*;
  * 
  */
 
-////TODO GET RID OF DELETE BUTTON????? MAYBE DON'T NEED IT? - IMPLEMENT IF TIME
 ////TODO Actions documentation
 
 //The MenuBar class provides the user with various track options via a drop-down menu, and allows
@@ -41,7 +40,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
     	setMainDisplayWindow(main_display_window);
     	setTracksList(tracks_list);
         JMenu edit_menu, track_menu, effect_menu;
-        JMenuItem cut_item, paste_item, delete_item;
+        JMenuItem cut_item, paste_item, erase_item;
         JMenuItem merge_item, resample_item;
         JMenuItem amplitude_item, normalize_item, clip_item, reverse_item;
         setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -51,7 +50,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         edit_menu = new JMenu("Edit");
             cut_item = new JMenuItem("Cut");
             paste_item = new JMenuItem("Paste");
-            delete_item = new JMenuItem("Delete");
+            erase_item = new JMenuItem("Erase");
         track_menu = new JMenu("Track");
             merge_item = new JMenuItem("Merge");
             resample_item = new JMenuItem("Resample");
@@ -64,7 +63,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         add(edit_menu);
             edit_menu.add(cut_item);
             edit_menu.add(paste_item);
-            edit_menu.add(delete_item);
+            edit_menu.add(erase_item);
         add(track_menu);
             track_menu.add(merge_item);
             track_menu.add(resample_item);
@@ -76,7 +75,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         
         cut_item.addActionListener(this);
         paste_item.addActionListener(this);
-        delete_item.addActionListener(this);
+        erase_item.addActionListener(this);
         merge_item.addActionListener(this);
         resample_item.addActionListener(this);
         amplitude_item.addActionListener(this);
@@ -118,8 +117,8 @@ public class MenuBar extends JMenuBar implements ActionListener {
         }
         
         
-        //Selection "Delete" allows the user to
-        if (e.getActionCommand().equals("Delete")) {
+        //Selection "Erase" allows the user to
+        if (e.getActionCommand().equals("Erase")) {
         	
         	if (getTracksList().isEmpty()) {
         	
@@ -128,12 +127,13 @@ public class MenuBar extends JMenuBar implements ActionListener {
         	
         	}
         	else {
-
+            	
             	File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
-            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "ZERO.wav");
+            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "1" + getTracksList().get(getMainDisplayWindow().getCurrentTrack()).getName());
             	
             	FileOutputStream out = null;
             	FileInputStream in = null;
+            	
             	
         		try {
         			in = new FileInputStream(current_file);
@@ -143,16 +143,35 @@ public class MenuBar extends JMenuBar implements ActionListener {
         			e1.printStackTrace();
         		}
         		
+        		
+        		
+        		
+        		
         		try {
-        			for (int i = 0; i<current_file.length(); i++) {
+        			for (int i = 0; i<(current_file.length()/2); i++) {
         				
         				while (i < 44) {
         					byte b1 = (byte) (in.read() & 0xff);
+        					byte b2 = (byte) (in.read() & 0xff);
+        					System.out.println(b1 + " " + b2 + " ");
         					out.write(b1);
+        					out.write(b2);
+        					System.out.println(b1 + " " + b2 + " ");
+        					System.out.println(i);
         					i++;
         				}
+        				
+        				
+        			byte b1 = (byte) (in.read() & 0xff);
+        			byte b2 = (byte) (in.read() & 0xff);
         			
-        			out.write((byte) 0);
+        			short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
+        			
+        				s = (short) 0;
+        				byte b3 = ((byte) (s & 0xff));
+        				byte b4 = ((byte) (s >> 8 & 0xff));
+        				out.write(b3);
+        				out.write(b4);
         			
         			}
         			
@@ -160,8 +179,8 @@ public class MenuBar extends JMenuBar implements ActionListener {
         			// TODO Auto-generated catch block
         			t.printStackTrace();
         		}
-            
-        	}
+            	
+            }
         }
         
         
@@ -218,12 +237,68 @@ public class MenuBar extends JMenuBar implements ActionListener {
         		JOptionPane no_tracks_notification = new JOptionPane();
                 no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
         	}
+        	else {
+        		Object[] resample_possible_values = {"44100", "22050", "11025"};
+        		String resample_selected_value = (String) JOptionPane.showInputDialog(null, "Choose a rate to Resample by:", "Resample Rate", JOptionPane.INFORMATION_MESSAGE, null, resample_possible_values, resample_possible_values[0]);
+        		System.out.println("SELECT VALUE " + resample_selected_value);
+        		
+        		int resample_rate = Integer.parseInt(resample_selected_value);
+        		
+
+            	
+            	File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
+            	
+            	FileInputStream in = null;
+            	
+        		try {
+        			in = new FileInputStream(current_file);
+        		} catch (FileNotFoundException e1) {
+        			e1.printStackTrace();
+        		}
+        		
+        		int current_rate = 0;
+        		
+        		try {
+        			for (int i = 0; i<32; i++) {
+        				
+        				while(i < 44 ) {
+        					
+        					byte b1 = (byte) (in.read() & 0xff);
+        					byte b2 = (byte) (in.read() & 0xff);
+        					byte b3 = (byte) (in.read() & 0xff);
+        					byte b4 = (byte) (in.read() & 0xff);
+        					i++;
+        					if (i == 7) {
+        						current_rate = b4 << 24 | b3 << 16 & 0xff0000 | b2 << 8 & 0xff00 | ((int) b1) & 0xff;
+        					}
+        				}
+        				
+        			}
+        			
+        		} catch (IOException t) {
+        			// TODO Auto-generated catch block
+        			t.printStackTrace();
+        		}
+        		
+        		if (current_rate == resample_rate) {
+        			JOptionPane invalid_input_rate_notification = new JOptionPane();
+	        		invalid_input_rate_notification.showMessageDialog(this, "Cannot resample to current sample rate!");
+	        	
+        		}
+        		else {
+        			getMainDisplayWindow().resample(resample_rate);
+        		}
+        		
+        	}
         	
+        	
+        	/*
     		Object[] resample_possible_values = {"44100 Hz", "22050 Hz", "11025 Hz"};
     		String resample_selected_value = (String) JOptionPane.showInputDialog(null, "Choose one", "Input", JOptionPane.INFORMATION_MESSAGE, null, resample_possible_values, resample_possible_values[0]);
     		System.out.println("SELECT VALUE " + resample_selected_value);
         	
     		//getMainDisplayWindow().getCurrentTrack();
+    		 */
     		
         }
         
@@ -277,7 +352,6 @@ public class MenuBar extends JMenuBar implements ActionListener {
 			        			}
 				        		
 				        		if (amp_adj_selected_value == "Normalize") {
-				        			System.out.println("beginning to Norm");
 				        			getMainDisplayWindow().adjustAmplitudeNormalize(scaling_ratio);
 				
 				        		}
@@ -314,7 +388,9 @@ public class MenuBar extends JMenuBar implements ActionListener {
         	else {
             	
             	File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
-            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "REVERSE");
+            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "REVERSE" + getTracksList().get(getMainDisplayWindow().getCurrentTrack()).getName());
+            	
+            	short[] short_array = new short[(int) (getMainDisplayWindow().getTracksList().get(getMainDisplayWindow().getCurrentTrack()).length() - 44)/2];
             	
             	FileOutputStream out = null;
             	FileInputStream in = null;
@@ -333,7 +409,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         		
         		
         		try {
-        			for (int i = 0; i<(current_file.length()/2); i++) {
+        			for (int i = 0; i<current_file.length()/2; i++) {
         				
         				while (i < 44) {
         					byte b1 = (byte) (in.read() & 0xff);
@@ -345,10 +421,26 @@ public class MenuBar extends JMenuBar implements ActionListener {
         				
         				
         			byte b1 = (byte) (in.read() & 0xff);
-        			byte b2 = (byte) (in.read() & 0xff);
+            		byte b2 = (byte) (in.read() & 0xff);
+            			
+            		short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
+            			
+            		short_array[i-44] = s;
         			
+        			}
         			
+        			for(int i = 0; i < short_array.length / 2; i++) {
+        			    short temp = short_array[i];
+        			    short_array[i] = short_array[short_array.length - i - 1];
+        			    short_array[short_array.length - i - 1] = temp;
+        			}
         			
+        			for(int i = 0; i < short_array.length; i++) {
+        				short read_short = short_array[i];
+        				byte b3 = ((byte) (read_short & 0xff));
+        				byte b4 = ((byte) (read_short >> 8 & 0xff));
+        				out.write(b3);
+        				out.write(b4);
         			}
         			
         		} catch (IOException t) {
