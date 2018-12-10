@@ -33,7 +33,8 @@ public class FileExplorerWindow extends JFileChooser implements ActionListener {
         setTracksList(tracks_list);
         setCurrentTrack(current_track);
         //setCurrentDirectory(new File ("/home/opdada01/Music"));
-        String userDir = System.getProperty("user.home");
+        //String userDir = System.getProperty("user.home");
+        String userDir = "C:\\Users\\dopda\\Desktop\\DAW WAV Files";
         //setCurrentDirectory(new File ("/home/opdada01/NetBeansProjects/DAW/sounds"));
         setCurrentDirectory(new File (userDir));
         FileNameExtensionFilter filter = new FileNameExtensionFilter(null, "wav");
