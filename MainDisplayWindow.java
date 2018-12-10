@@ -100,6 +100,92 @@ public class MainDisplayWindow extends JPanel {
     	getProgramFrame().repaint();
     }
     
+    
+    void resample(int resample_rate) {
+    	
+    	File current_file = getTracksList().get(getCurrentTrack());
+    	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "_resampled_" + getTracksList().get(getCurrentTrack()).getName());
+    	
+    	FileOutputStream out = null;
+    	FileInputStream in = null;
+    	
+    	
+		try {
+			in = new FileInputStream(current_file);
+			out = new FileOutputStream(write_file);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			int i=0;
+			while(i < 11 ) {
+					
+					byte b1 = (byte) (in.read() & 0xff);
+					byte b2 = (byte) (in.read() & 0xff);
+					byte b3 = (byte) (in.read() & 0xff);
+					byte b4 = (byte) (in.read() & 0xff);
+					i++;
+					int val = b4 << 24 | b3 << 16 & 0xff0000 | b2 << 8 & 0xff00 | ((int) b1) & 0xff;
+					
+					if (i == 7) {
+						
+						
+						
+						byte leastSignificantByte = (byte) (val & 0xff);
+					    byte nextToLeastSignificantByte = (byte) (val >> 8 & 0xff);
+					    byte nextToMostSignificantByte = (byte) (val >> 16 & 0xff);
+					    byte mostSignificantByte = (byte) (val >> 32 & 0xff);
+					    
+					    out.write(leastSignificantByte);
+				        out.write(nextToLeastSignificantByte);
+				        out.write(nextToMostSignificantByte);
+				        out.write(mostSignificantByte);
+						
+						System.out.println("VAL: " + val);
+					}
+					if (i == 8) {
+						
+						val = val *2;
+						
+						byte leastSignificantByte = (byte) (val & 0xff);
+					    byte nextToLeastSignificantByte = (byte) (val >> 8 & 0xff);
+					    byte nextToMostSignificantByte = (byte) (val >> 16 & 0xff);
+					    byte mostSignificantByte = (byte) (val >> 32 & 0xff);
+					    
+					    out.write(leastSignificantByte);
+				        out.write(nextToLeastSignificantByte);
+				        out.write(nextToMostSignificantByte);
+				        out.write(mostSignificantByte);
+					}
+					if (i != 7 && i != 8) {
+						out.write(b1);
+				        out.write(b2);
+				        out.write(b3);
+				        out.write(b4);
+					}
+				
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     void adjustAmplitudeClip(double scaling_ratio) {
     	
     	File current_file = getTracksList().get(getCurrentTrack());
@@ -193,6 +279,8 @@ public class MainDisplayWindow extends JPanel {
     
     void adjustAmplitudeNormalize(double scaling_ratio) {
     	
+    	
+    	
     	File current_file = getTracksList().get(getCurrentTrack());
     	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "1" + getTracksList().get(getCurrentTrack()).getName());
     	
@@ -211,6 +299,8 @@ public class MainDisplayWindow extends JPanel {
 		
 		double adjusted_scaling_ratio;
 		byte max_byte = 0;
+		
+		
 		
 		try {
 			
@@ -237,6 +327,8 @@ public class MainDisplayWindow extends JPanel {
 		}
 		catch (Exception could_not_read_from_FileInputStream) {}
 		
+		
+		
 		if (scaling_ratio > 1) {
 			adjusted_scaling_ratio = ((double) 126 / (double) max_byte);
 		}
@@ -244,9 +336,6 @@ public class MainDisplayWindow extends JPanel {
 			adjusted_scaling_ratio = scaling_ratio;
 		}
 		
-		
-		System.out.println("OLD SCALE : " + scaling_ratio);
-		System.out.println("NEW SCALE : " + adjusted_scaling_ratio);
 		
 		
 		try {
@@ -359,3 +448,6 @@ public class MainDisplayWindow extends JPanel {
      }
     
 }
+
+//byte[] byte_array = new byte[(int) current_file.length()];
+
