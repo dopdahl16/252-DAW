@@ -8,6 +8,9 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
@@ -19,22 +22,27 @@ import java.text.DecimalFormat;
  * 
  */
 
-/*
-DOCUMENTATION
-*/
+////TODO ADD A DELETE BUTTON WITH A POP-UP MENU THAT ASKS IF YOU REALLY DO WANT TO REMOVE THE TRACK
+////TODO ADD A SAVE BUTTON
+////TODO ADD BACKGROUND COLOR CHANGER TO SIGNIFY WHICH TRACK IS CURRENTLY SELECTED
+
+//The AudioDisplayContainer class serves as a container component for AudioFileInfo objects and 
 
 
-///ADD A DELETE BUTTON WITH A POP-UP MENU THAT ASKS IF YOU REALLY DO WANT TO REMOVE THE TRACK
-///ADD A SAVE BUTTON
-///ADD BACKGROUND COLOR CHANGER TO SIGNIFY WHICH TRACK IS CURRENTLY SELECTED
-
-
+//The AudioFileInfo class serves as a display of a single track's information and as a way for
+//the user to interact with the track in certain application-wide ways (e.g., selecting it for
+//playback, deleting it from the tracks_list, etc.).
 
 public class AudioFileInfo extends JPanel implements ActionListener {
     
+	/* FIELDS */
+	
 	public File track;
 	public MainDisplayWindow main_display_window;
 	public AudioDisplayContainer audio_display_container;
+	
+	
+	/* CONSTRUCTOR */
 	
     public AudioFileInfo(AudioDisplayContainer audio_display_container, MainDisplayWindow main_display_window, File track) {
         
@@ -100,9 +108,102 @@ public class AudioFileInfo extends JPanel implements ActionListener {
     	if (e.getActionCommand().equals("SAVE")) {
     		
     		
+    		File current_file = getMainDisplayWindow().getTracksList().get(getMainDisplayWindow().getCurrentTrack());
+    		String write_file_name = JOptionPane.showInputDialog("What would you like to save this .wav File as?");
+        	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + write_file_name + ".wav");
+        	
+        	FileOutputStream out = null;
+        	FileInputStream in = null;
+        	
+        	
+    		try {
+    			in = new FileInputStream(current_file);
+    			out = new FileOutputStream(write_file);
+    		} catch (FileNotFoundException e1) {
+    			// TODO Auto-generated catch block
+    			e1.printStackTrace();
+    		}
+    		
+    		
+    		
+    		
+    		
+    		try {
+    			for (int i = 0; i<current_file.length(); i++) {
+    				
+	    			byte b1 = (byte) (in.read() & 0xff);
+	    			
+	    			out.write(b1);
+					
+    			
+    			}
+    			
+    		} catch (IOException t) {
+    			// TODO Auto-generated catch block
+    			t.printStackTrace();
+    		}
+        	
+        }
+        
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
     	} 
     	
-    }
+    
     File getTrack() {
         return track;
     }

@@ -3,6 +3,10 @@ package daw;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 
@@ -15,9 +19,10 @@ import javax.swing.*;
  */
 
 ////TODO GET RID OF DELETE BUTTON????? MAYBE DON'T NEED IT? - IMPLEMENT IF TIME
+////TODO Actions documentation
 
-//The MenuBar class provides the user with various options via a drop-down menu, and allows our
-//application to handle user selections. 
+//The MenuBar class provides the user with various track options via a drop-down menu, and allows
+//the application to handle user selections. 
 
 public class MenuBar extends JMenuBar implements ActionListener {
 
@@ -88,27 +93,74 @@ public class MenuBar extends JMenuBar implements ActionListener {
     	
     	//Selection "Cut" allows the user to
         if (e.getActionCommand().equals("Cut")) {
+        	
         	if (getTracksList().isEmpty()) {
+        		
         		JOptionPane no_tracks_notification = new JOptionPane();
                 no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
+                
         	}
         }
         
         
         //Selection "Paste" allows the user to
         if (e.getActionCommand().equals("Paste")) {
+        	
         	if (getTracksList().isEmpty()) {
+ 
         		JOptionPane no_tracks_notification = new JOptionPane();
                 no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
+        	
+        	}
+        	else {
+        		
         	}
         }
         
         
         //Selection "Delete" allows the user to
         if (e.getActionCommand().equals("Delete")) {
+        	
         	if (getTracksList().isEmpty()) {
+        	
         		JOptionPane no_tracks_notification = new JOptionPane();
                 no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
+        	
+        	}
+        	else {
+
+            	File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
+            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "ZERO.wav");
+            	
+            	FileOutputStream out = null;
+            	FileInputStream in = null;
+            	
+        		try {
+        			in = new FileInputStream(current_file);
+        			out = new FileOutputStream(write_file);
+        		} catch (FileNotFoundException e1) {
+        			// TODO Auto-generated catch block
+        			e1.printStackTrace();
+        		}
+        		
+        		try {
+        			for (int i = 0; i<current_file.length(); i++) {
+        				
+        				while (i < 44) {
+        					byte b1 = (byte) (in.read() & 0xff);
+        					out.write(b1);
+        					i++;
+        				}
+        			
+        			out.write((byte) 0);
+        			
+        			}
+        			
+        		} catch (IOException t) {
+        			// TODO Auto-generated catch block
+        			t.printStackTrace();
+        		}
+            
         	}
         }
         
@@ -130,9 +182,9 @@ public class MenuBar extends JMenuBar implements ActionListener {
         	}
         	else {
         	
-        		//possibleValues works as the options for the drop-down menu from which the user can 
+        		//merge_possible_values works as the options for the drop-down menu from which the user can 
         		//select a track to merge with the current track
-	        	Object[] possibleValues = new Object[getTracksList().size()];
+	        	Object[] merge_possible_values = new Object[getTracksList().size()];
 	        	int i;
 	        	
 	        	//Here we go through tracks_list and add the name of each to possibleVales except for 
@@ -141,13 +193,13 @@ public class MenuBar extends JMenuBar implements ActionListener {
 	        		
 	        		if (getTracksList().indexOf(getTracksList().get(i)) != getMainDisplayWindow().getCurrentTrack()) {
 	        			
-	        			possibleValues[i] = getTracksList().get(i).getName();
+	        			merge_possible_values[i] = getTracksList().get(i).getName();
 	        			
 	        		}
 	        	}
 	        	
 	        	try {
-		    		File selectedValue = (File) JOptionPane.showInputDialog(null, "Select a Track to Merge With", "Merge Tracks", JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
+		    		File merge_selected_value = (File) JOptionPane.showInputDialog(null, "Select a Track to Merge With", "Merge Tracks", JOptionPane.INFORMATION_MESSAGE, null, merge_possible_values, merge_possible_values[0]);
 	        	}
 	        	catch (Exception excpt) {
 	        		JOptionPane can_not_merge_tracks_notification = new JOptionPane();
@@ -167,9 +219,9 @@ public class MenuBar extends JMenuBar implements ActionListener {
                 no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
         	}
         	
-    		Object[] possibleValues = {"44100 Hz", "22050 Hz", "11025 Hz"};
-    		String selectedValue = (String) JOptionPane.showInputDialog(null, "Choose one", "Input", JOptionPane.INFORMATION_MESSAGE, null, possibleValues, possibleValues[0]);
-    		System.out.println("SELECT VALUE " + selectedValue);
+    		Object[] resample_possible_values = {"44100 Hz", "22050 Hz", "11025 Hz"};
+    		String resample_selected_value = (String) JOptionPane.showInputDialog(null, "Choose one", "Input", JOptionPane.INFORMATION_MESSAGE, null, resample_possible_values, resample_possible_values[0]);
+    		System.out.println("SELECT VALUE " + resample_selected_value);
         	
     		//getMainDisplayWindow().getCurrentTrack();
     		
@@ -190,10 +242,10 @@ public class MenuBar extends JMenuBar implements ActionListener {
         	}
         	else {
         		
-        		String input_string = JOptionPane.showInputDialog("Please input a percentage value to scale by:");
+        		String percentage_input_string = JOptionPane.showInputDialog("Please input a percentage value to scale by:");
         		
         		try {
-		        	if (input_string.equals("")) {
+		        	if (percentage_input_string.equals("")) {
 		        			
 		        		JOptionPane invalid_input_val_notification = new JOptionPane();
 		        		invalid_input_val_notification.showMessageDialog(this, "Percentage input necessary to adjust amplitude");
@@ -203,27 +255,49 @@ public class MenuBar extends JMenuBar implements ActionListener {
 		        		try {
 		        			//We take the user input, convert it to a number, and divide by 100.0 to convert from 
 		        			//percentage and get a double.
-							double inputValue = Double.parseDouble(input_string);
-							inputValue = inputValue / 100.0;
+							double scaling_ratio = Double.parseDouble(percentage_input_string);
+							scaling_ratio = scaling_ratio / 100.0;
 							
-							if (inputValue > 10.0 || inputValue < 0) {
+							if (scaling_ratio > 10.0 || scaling_ratio < 0) {
 								
 								JOptionPane invalid_input_val_notification = new JOptionPane();
-								invalid_input_val_notification.showMessageDialog(this, "\"" + input_string + "\"" + " is not a valid percentage. Please enter a percentage in the range 0% - 1000%");
+								invalid_input_val_notification.showMessageDialog(this, "\"" + percentage_input_string + "\"" + " is not a valid percentage. Please enter a percentage in the range 0% - 1000%");
 							}
 							else {
 								
-								getMainDisplayWindow().adjustAmplitude(inputValue);
+								Object[] amp_adj_possible_values = {"Clip", "Normalize"};
+
+				        		Object amp_adj_selected_value = JOptionPane.showInputDialog(null, "How would you like to scale?\n(See manual for details on scaling methods)", "Scaling Method", JOptionPane.INFORMATION_MESSAGE, null, amp_adj_possible_values, amp_adj_possible_values[0]);
+				        		
+				        		System.out.println(amp_adj_selected_value);
+				        		
+				        		if(amp_adj_selected_value == "Clip") {
+				        			System.out.println("beginning to Clip");
+			        				getMainDisplayWindow().adjustAmplitudeClip(scaling_ratio);
+			        			}
+				        		
+				        		if (amp_adj_selected_value == "Normalize") {
+				        			System.out.println("beginning to Norm");
+				        			getMainDisplayWindow().adjustAmplitudeNormalize(scaling_ratio);
+				
+				        		}
+				        		if (amp_adj_selected_value != "Normalize" && amp_adj_selected_value != "Clip") {
+				        			
+				        			JOptionPane null_input_amp_adj_method_notification = new JOptionPane();
+				        			null_input_amp_adj_method_notification.showMessageDialog(this, "Must select a method of scaling.");
+				        			
+				        		}
 							}
 						}
 						catch (Exception invalid_percentage) {
 							JOptionPane invalid_input_str_notification = new JOptionPane();
-							invalid_input_str_notification.showMessageDialog(this, "\"" + input_string + "\"" + " is not a valid percentage");
+							invalid_input_str_notification.showMessageDialog(this, "\"" + percentage_input_string + "\"" + " is not a valid percentage");
 						}
 	        		}
         		}
-        		//If the input_string is null, that means the user cancelled the operation. We do nothing in this case.
-        		catch(Exception null_input_string) {}
+        		//If the percentage_input_string is null, that means the user cancelled the operation. We do nothing in this case.
+        		catch (Exception null_percentage_input_string) {}
+        		 
         	}
         }
         
@@ -235,7 +309,54 @@ public class MenuBar extends JMenuBar implements ActionListener {
         		
         		JOptionPane no_tracks_notification = new JOptionPane();
                 no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
+                
         	}
+        	else {
+            	
+            	File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
+            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "REVERSE");
+            	
+            	FileOutputStream out = null;
+            	FileInputStream in = null;
+            	
+            	
+        		try {
+        			in = new FileInputStream(current_file);
+        			out = new FileOutputStream(write_file);
+        		} catch (FileNotFoundException e1) {
+        			// TODO Auto-generated catch block
+        			e1.printStackTrace();
+        		}
+        		
+        		
+        		
+        		
+        		
+        		try {
+        			for (int i = 0; i<(current_file.length()/2); i++) {
+        				
+        				while (i < 44) {
+        					byte b1 = (byte) (in.read() & 0xff);
+        					byte b2 = (byte) (in.read() & 0xff);
+        					out.write(b1);
+        					out.write(b2);
+        					i++;
+        				}
+        				
+        				
+        			byte b1 = (byte) (in.read() & 0xff);
+        			byte b2 = (byte) (in.read() & 0xff);
+        			
+        			
+        			
+        			}
+        			
+        		} catch (IOException t) {
+        			// TODO Auto-generated catch block
+        			t.printStackTrace();
+        		}
+            	
+            }
         }
     }
     
