@@ -143,7 +143,7 @@ public class ProgramFrame extends JFrame {
                 }
 				//This catch clause catches all IOExceptions that may be throw while the streams are
 				//writing or opening.
-                catch(IOException i) {
+                catch (IOException i) {
                 	i.printStackTrace();
                 }
             }
@@ -260,11 +260,13 @@ public class ProgramFrame extends JFrame {
     void setCurrentTrack(int other) {
         current_track = other;
         
-        //This catch clause catch catches any Exception that may be thrown while creating 
-        //our_current_track_display, e.g., empty tracks_list, current_track does not exist.
         try {
         	our_current_track_display.setText("Current Track: "+ getTracksList().get(current_track).getName());
         }
+        //This catch clause catch catches any Exception that may be thrown while creating 
+        //our_current_track_display, e.g., empty tracks_list, current_track does not exist.
+        //If such an error occurs, it means there is no current track, so we set the text of
+        //our_current_track_display accordingly.
         catch (Exception except) {
         	our_current_track_display.setText("No Current Track");
         }
