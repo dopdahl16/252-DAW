@@ -24,6 +24,11 @@ import java.io.IOException;
 DOCUMENTATION
 */
 
+
+
+////TODO Close all filestreams!!!!!!!!
+
+
 public class MainDisplayWindow extends JPanel {
     
 	public ProgramFrame program_frame;
@@ -62,28 +67,20 @@ public class MainDisplayWindow extends JPanel {
     }
     
     void removeAudioFile(AudioDisplayContainer audio_display_container) {
-    	//audio_display_container_list.remove(audio_display_container);
-    	
-    	System.out.println("Track: " + audio_display_container.getTrack().getName() + " removed from program");
-    	System.out.println("BOOP: " + getTracksList().indexOf(audio_display_container.getTrack()));
-    	System.out.println("BOOP1: " + getTracksList());
-    	System.out.println("BOOP2: " + getTracksList().indexOf(audio_display_container));
-    	System.out.println("BOOP3: " + getTracksList().indexOf(audio_display_container.getTrack()));
-    	
     	
     	remove(audio_display_container);
     	revalidate();
     	repaint();
     	int new_index;
-    	System.out.println("BOOP BOOP: " + getTracksList().indexOf(audio_display_container.getTrack()));
+    	
     	if (getTracksList().indexOf(audio_display_container.getTrack()) - 1 >= 0) {
     		new_index = (getTracksList().indexOf(audio_display_container.getTrack()) - 1);
     	}
     	else {
-    		System.out.println("NEW INDEX ASSIGNED 0");
+    		
     		new_index = 0;
     	}
-    	System.out.println("NEW INDEX: " + new_index);
+    	
     	getTracksList().remove(audio_display_container.getTrack());
     	getProgramFrame().setCurrentTrack(new_index);
     	getProgramFrame().our_current_track_display.revalidate();
@@ -96,7 +93,6 @@ public class MainDisplayWindow extends JPanel {
    
     void selectTrack(File selected_track) {
     	setCurrentTrack(getTracksList().indexOf(selected_track));
-    	System.out.println("Track: " + selected_track.getName() + " selected");
     	getProgramFrame().setCurrentTrack(getTracksList().indexOf(selected_track));
     	getProgramFrame().our_current_track_display.revalidate();
     	getProgramFrame().our_current_track_display.repaint();
@@ -104,20 +100,14 @@ public class MainDisplayWindow extends JPanel {
     	getProgramFrame().repaint();
     }
     
-    void adjustAmplitude(double scaling_ratio) {
+    void adjustAmplitudeClip(double scaling_ratio) {
     	
     	File current_file = getTracksList().get(getCurrentTrack());
-    	//AudioFormat fmt = new AudioFormat(44100f, 16, 1, true, false);
-    	//AudioFormat audioFormat = new AudioFormat(Encoding.ULAW, 8000, 8, 1, frameSize, 50, true);
-    	File write_file = new File("C:\\Users\\dopda\\Downloads\\WWW\\aaa.wav");
-    	//setAudioInputStream(getTracksList().get(getCurrentTrack()));
-    	//AudioInputStream stream = our_audio_stream;
-    	scaling_ratio = 0.5;
+    	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "1" + getTracksList().get(getCurrentTrack()).getName());
     	
     	FileOutputStream out = null;
     	FileInputStream in = null;
     	
-    	AudioInputStream my_stream = null;
     	
 		try {
 			in = new FileInputStream(current_file);
@@ -127,24 +117,12 @@ public class MainDisplayWindow extends JPanel {
 			e1.printStackTrace();
 		}
 		
-		try {
-			my_stream = AudioSystem.getAudioInputStream(current_file);
-		} catch (UnsupportedAudioFileException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
 		
 		
 		
 		
 		try {
-			// i<999999999
-			for (int i = 0; i<999999999; i++) {
-				
+			for (int i = 0; i<(current_file.length()/2); i++) {
 				
 				while (i < 44) {
 					byte b1 = (byte) (in.read() & 0xff);
@@ -160,180 +138,187 @@ public class MainDisplayWindow extends JPanel {
 				
 			byte b1 = (byte) (in.read() & 0xff);
 			byte b2 = (byte) (in.read() & 0xff);
-			if (b1 == -1) {
-				System.out.println("WHAM");
-				break;
-			}
+			
 			short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
 			
-			
-			
-			
-				System.out.println(b1 + " " + b2 + " " + s);
-				s = (short) (s * 0.5);
+				s = (short) (s * scaling_ratio);
 				byte b3 = ((byte) (s & 0xff));
 				byte b4 = ((byte) (s >> 8 & 0xff));
-				System.out.println(b3 + " " + b4 + " " + s);
-				System.out.println(" " + i);
+				if (b1 * scaling_ratio >= 127 || b1 * scaling_ratio <= -128) {
+					if (b1 > 0) {
+						b3 = 127;
+					}
+					if (b1 < 0) {
+						b3 = -128;
+					}
+				}
+				if (b2 * scaling_ratio >= 127 || b2 * scaling_ratio <= -128) {
+					if (b2 > 0) {
+						b4 = 127;
+					}
+					if (b2 < 0) {
+						b4 = -128;
+					}
+				}
 			
-		
 				out.write(b3);
 				out.write(b4);
 			
-				
-			
-				
 			}
 			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    void adjustAmplitudeNormalize(double scaling_ratio) {
+    	
+    	File current_file = getTracksList().get(getCurrentTrack());
+    	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "1" + getTracksList().get(getCurrentTrack()).getName());
+    	
+    	FileOutputStream out = null;
+    	FileInputStream in = null;
+    	
+		try {
+			in = new FileInputStream(current_file);
+			out = new FileOutputStream(write_file);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		//If scaling_ratio <= 1, don't have to do this
+		
+		double adjusted_scaling_ratio;
+		byte max_byte = 0;
+		
+		try {
 			
-			
-			
-			
-			
+			for (int i = 0; i < current_file.length(); i++) {
+				
+				if (i > 44) {
+				
+					
+					byte current_byte = (byte) (in.read() & 0xff);
+					
+					if (current_byte > max_byte) {
+						
+						max_byte = current_byte;
+					
+					}
+					if (current_byte == 127) {
+						System.out.println("CUR BYT: " + current_byte + "    " + i);
+					}
+					
+				}
+				
+			}
+			System.out.println("MAX B : " + max_byte);
+		}
+		catch (Exception could_not_read_from_FileInputStream) {}
+		
+		if (scaling_ratio > 1) {
+			adjusted_scaling_ratio = ((double) 126 / (double) max_byte);
+		}
+		else {
+			adjusted_scaling_ratio = scaling_ratio;
+		}
+		
+		
+		System.out.println("OLD SCALE : " + scaling_ratio);
+		System.out.println("NEW SCALE : " + adjusted_scaling_ratio);
+		
+		
+		try {
+			in.close();
+			in = new FileInputStream(current_file);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	
-    	//try {
-    		
-    	
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		/*
-			AudioInputStream in_stream = AudioSystem.getAudioInputStream(current_file);
-			Short sample;
+		
+		
+		
+		
+		try {
+			for (int i = 0; i < current_file.length()/2; i++) {
+				
+				while (i < 44) {
+					byte b1 = (byte) (in.read() & 0xff);
+					byte b2 = (byte) (in.read() & 0xff);
+					out.write(b1);
+					out.write(b2);
+					i++;
+				}
+				
+				
+			byte b1 = (byte) (in.read() & 0xff);
+			byte b2 = (byte) (in.read() & 0xff);
 			
-			int max_length = 5000000;
-			int length = in_stream.available();
-			if (in_stream.available()>max_length) {
-				length = max_length;
+			short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
+			
+				s = (short) (s * adjusted_scaling_ratio);
+				byte b3 = ((byte) (s & 0xff));
+				byte b4 = ((byte) (s >> 8 & 0xff));
+			
+				
+				out.write(b3);
+				out.write(b4);
+			
 			}
 			
-			
-			//read bytes as shorts - in book 48
-			byte [] byte_stream = new byte [length];
-			in_stream.read(byte_stream, 0, length);
-			int i;
-			for (i=0; i<byte_stream.length; i = i+2) {
-				byte b1 = byte_stream[i];
-				byte b2 = byte_stream[i+1];
-				
-				System.out.println(b1 + " " + b2);
-				
-				ByteBuffer bb = ByteBuffer.allocate(2);
-				bb.order(ByteOrder.LITTLE_ENDIAN);
-				bb.put(b1);
-				bb.put(b2);
-				sample = bb.getShort(0);
-				sample = (short) (sample * scaling_ratio);
-				
-				b1 = ((byte) (sample & 0xff));
-				b2 = ((byte) (sample >> 8 & 0xff));
-				
-				System.out.println(sample);
-				System.out.println("EDITED" + b1 + " " + b2);
-				System.out.println(" ");
-				
-				
-				
-				
-				
-				
-				
-				*/
-				/*
-				
-				System.out.println("BYTES: " + b1 + " " + b2);
-				
-				ByteBuffer bb = ByteBuffer.allocate(2);
-				bb.order(ByteOrder.LITTLE_ENDIAN);
-				bb.put(b1);
-				bb.put(b2);
-				sample = bb.getShort(0);
-				
-				
-				
-				
-				
-				sample = (((short)(((((int)b2)|0xff)<<8)|(((int)b1)|0xff))));
-				
-				
-				
-				
-				System.out.println("SHORT PRE_EDIT: " + sample);
-				
-				
-				int jjj = (int) sample;
-				
-				System.out.println("SHORT TO INT: " + jjj);
-				
-				jjj = (int) (jjj * scaling_ratio);
-				
-				System.out.println("Culprit?: " + jjj);
-				
-				sample = (short) jjj;
-				
-				System.out.println("SHORT post_EDIT: " + sample);
-				
-				b1 = (byte) (sample & 0xff);
-				b2 = (byte) ((sample >> 8) & 0xff);
-				
-				System.out.println("BYTES 2         : " + b1 + " " + b2);
-				System.out.println(" ");
-				
-				
-				
-				
-				byte_stream[i] = b1;
-				byte_stream[i+1] = b2;
-				
-			}
-			*/
-    		/*
-			ByteArrayInputStream b_in = new ByteArrayInputStream(byte_stream);
-			
-			//AudioInputStream my_stream = new AudioInputStream(my_byte_stream, in_stream.getFormat(), byte_stream.length);
-			FileOutputStream output = new FileOutputStream(new File("C:\\Users\\dopda\\Downloads\\WWW\\aaa.wav"));
-			output.write(byte_stream);
-			output.close();
-			
-			//DataOutputStream dos = new DataOutputStream(new FileOutputStream("C:\\\\Users\\\\dopda\\\\Downloads\\\\WWW\\\\aaa.wav"));
-	        //dos.write(byte_stream);
-	        AudioFormat format = in_stream.getFormat();
-	        AudioInputStream stream = new AudioInputStream(b_in, format, byte_stream.length);
-	        File file = new File("C:\\\\Users\\\\dopda\\\\Downloads\\\\WWW\\\\bbb.wav");
-	        AudioSystem.write(stream, Type.WAVE, file);
-	        System.out.println("Amp Adjusted");
-	        */
-	        /*
-		} 
-    	
-    	catch (UnsupportedAudioFileException | IOException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	*/
+    	
+    
     	
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -368,7 +353,7 @@ public class MainDisplayWindow extends JPanel {
         try{
          our_audio_stream = AudioSystem.getAudioInputStream(other);
         }
-        catch(Exception excep) {
+        catch (Exception excep) {
             
         }
      }
