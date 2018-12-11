@@ -6,13 +6,10 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
  *
@@ -21,8 +18,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  * @author nteste01 Teboho Nteso
  * 
  */
-
-////TODO NEED TO SET EXCEPTIONS
 
 //The TooBar class provides the user with the ability to control track playback and to show or hide 
 //the FileExplorerWindow
