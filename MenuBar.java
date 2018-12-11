@@ -5,8 +5,6 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 
@@ -90,34 +88,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
     //the user has a track to interact with. This is the first thing done with every action.
     @Override
     public void actionPerformed(ActionEvent e) {
-    	
-    	//Selection "Cut" allows the user to
-        if (e.getActionCommand().equals("Cut")) {
-        	
-        	if (getTracksList().isEmpty()) {
-        		
-        		JOptionPane no_tracks_notification = new JOptionPane();
-                no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
-                
-        	}
-        }
-        
-        
-        //Selection "Paste" allows the user to
-        if (e.getActionCommand().equals("Paste")) {
-        	
-        	if (getTracksList().isEmpty()) {
  
-        		JOptionPane no_tracks_notification = new JOptionPane();
-                no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
-        	
-        	}
-        	else {
-        		
-        	}
-        }
-        
-        
         //Selection "Erase" allows the user to
         if (e.getActionCommand().equals("Erase")) {
         	
@@ -128,60 +99,8 @@ public class MenuBar extends JMenuBar implements ActionListener {
         	
         	}
         	else {
-            	
-            	File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
-            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "1" + getTracksList().get(getMainDisplayWindow().getCurrentTrack()).getName());
-            	
-            	FileOutputStream out = null;
-            	FileInputStream in = null;
-            	
-            	
-        		try {
-        			in = new FileInputStream(current_file);
-        			out = new FileOutputStream(write_file);
-        		} catch (FileNotFoundException e1) {
-        			// TODO Auto-generated catch block
-        			e1.printStackTrace();
-        		}
-        		
-        		
-        		
-        		
-        		
-        		try {
-        			for (int i = 0; i<(current_file.length()/2); i++) {
-        				
-        				while (i < 44) {
-        					byte b1 = (byte) (in.read() & 0xff);
-        					byte b2 = (byte) (in.read() & 0xff);
-        					System.out.println(b1 + " " + b2 + " ");
-        					out.write(b1);
-        					out.write(b2);
-        					System.out.println(b1 + " " + b2 + " ");
-        					System.out.println(i);
-        					i++;
-        				}
-        				
-        				
-        			byte b1 = (byte) (in.read() & 0xff);
-        			byte b2 = (byte) (in.read() & 0xff);
-        			
-        			short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
-        			
-        				s = (short) 0;
-        				byte b3 = ((byte) (s & 0xff));
-        				byte b4 = ((byte) (s >> 8 & 0xff));
-        				out.write(b3);
-        				out.write(b4);
-        			
-        			}
-        			
-        		} catch (IOException t) {
-        			// TODO Auto-generated catch block
-        			t.printStackTrace();
-        		}
-            	
-            }
+        		getMainDisplayWindow().erase();
+        	}
         }
         
         
@@ -224,6 +143,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
 		    	System.out.println(merge_selected_file_string);
 		    		
 		    	for (i=0; i<getTracksList().size(); i++) {
+		    		
 		    		if (merge_selected_file_string.equals(getTracksList().get(i).getName())) {
 		   				
 		    			merge_selected_file = getTracksList().get(i);
@@ -239,227 +159,80 @@ public class MenuBar extends JMenuBar implements ActionListener {
 		   		}
 	    		else {
 	    			
-	    			
-	    			
-	    			////MUST CHECK AND SEE IF BOTH HAVE SAME SAMPLE RATE
-	    			
-	    			
-	    			
-		    		System.out.println(merge_selected_file.getName());
-		    		
-	            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + merge_selected_file.getName() + "_merge_" + getTracksList().get(getMainDisplayWindow().getCurrentTrack()).getName());
+	    			File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
 	            	
-	            	short[] short_array1 = new short[(int) (merge_selected_file.length() - 44)/2];
-	            	short[] short_array2 = new short[(int) (getTracksList().get(getMainDisplayWindow().getCurrentTrack()).length() - 44)/2];
-	            	
-	            	FileOutputStream out = null;
 	            	FileInputStream in1 = null;
+	            	
+	        		try {
+	        			in1 = new FileInputStream(current_file);
+	        		} catch (Exception file_not_found) {}
+	        		
+	        		int current_file_rate = 0;
+	        		try {
+		        		for (int i1 = 0; i1<32; i1++) {
+		        				
+		        			while(i1 < 44 ) {
+		        					
+		        				byte b1 = (byte) (in1.read() & 0xff);
+		       					byte b2 = (byte) (in1.read() & 0xff);
+		       					byte b3 = (byte) (in1.read() & 0xff);
+		       					byte b4 = (byte) (in1.read() & 0xff);
+		       					i1++;
+		       					if (i1 == 7) {
+		       						current_file_rate = b4 << 24 | b3 << 16 & 0xff0000 | b2 << 8 & 0xff00 | ((int) b1) & 0xff;
+		       					}
+		       				}
+	        				
+		        		}
+		    		}
+	        		catch (Exception could_not_read_from_file_input_stream) {}
+	            	
 	            	FileInputStream in2 = null;
 	            	
-	            	try {
-	        			in1 = new FileInputStream(merge_selected_file);
-	        			in2 = new FileInputStream(getTracksList().get(getMainDisplayWindow().getCurrentTrack()));
-	        			out = new FileOutputStream(write_file);
-	        		} catch (FileNotFoundException e1) {
-	        			// TODO Auto-generated catch block
-	        			e1.printStackTrace();
-	        		}
-	            	
-	            	try {
-	        			for (int i1 = 0; i1<merge_selected_file.length()/2; i1++) {
-	        				
-	        				while (i1 < 44) {
-	        					byte b1 = (byte) (in1.read() & 0xff);
-	        					byte b2 = (byte) (in1.read() & 0xff);
-	        					i1++;
-	        				}
-	        				
-	        				
-	        			byte b1 = (byte) (in1.read() & 0xff);
-	            		byte b2 = (byte) (in1.read() & 0xff);
-	            			
-	            		short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
-	            			
-	            		short_array1[i1-44] = s;
-	        			
-	            		System.out.println("Reading into array1");
-	            		
+	        		try {
+	        			in2 = new FileInputStream(current_file);
+	        		} catch (FileNotFoundException could_not_open_file_input_stream) {}
+	        		
+	        		int merge_selected_file_rate = 0;
+	        		
+	        		try {
+		        		for (int i1 = 0; i1<32; i1++) {
+		        				
+		        			while(i1 < 44 ) {
+		        					
+		        				byte b1 = (byte) (in2.read() & 0xff);
+		       					byte b2 = (byte) (in2.read() & 0xff);
+		       					byte b3 = (byte) (in2.read() & 0xff);
+		       					byte b4 = (byte) (in2.read() & 0xff);
+		       					i1++;
+		       					if (i1 == 7) {
+		       						merge_selected_file_rate = b4 << 24 | b3 << 16 & 0xff0000 | b2 << 8 & 0xff00 | ((int) b1) & 0xff;
+		       					}
+		       				}
+		        				
 	        			}
-	        			
-	        		} catch (IOException t) {
-	        			// TODO Auto-generated catch block
-	        			t.printStackTrace();
 	        		}
-	            	
-	            	
-	            	
-	            	
-	            	
-	            	try {
-	        			for (int i1 = 0; i1<getTracksList().get(getMainDisplayWindow().getCurrentTrack()).length()/2; i1++) {
-	        				
-	        				while (i1 < 44) {
-	        					byte b1 = (byte) (in2.read() & 0xff);
-	        					byte b2 = (byte) (in2.read() & 0xff);
-	        					out.write(b1);
-	        					out.write(b2);
-	        					i1++;
-	        				}
-	        				
-	        				
-	        			byte b1 = (byte) (in2.read() & 0xff);
-	            		byte b2 = (byte) (in2.read() & 0xff);
-	            			
-	            		short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
-	            			
-	            		short_array2[i1-44] = s;
-	        			
-	            		System.out.println("Reading into array2");
-	            		
-	        			}
-	        			
-	        		} catch (IOException t) {
-	        			// TODO Auto-generated catch block
-	        			t.printStackTrace();
+	        		catch (Exception could_not_read_from_file_input_stream) {}
+	    			
+	        		if (merge_selected_file_rate != current_file_rate) {
+			    		
+			   			JOptionPane can_not_merge_different_samplerates = new JOptionPane();
+			   			can_not_merge_different_samplerates.showMessageDialog(this, "Cannot merge tracks with different sample rates");
+			       		
+			   		}
+	        		else {
+	        			getMainDisplayWindow().merge(merge_selected_file);
 	        		}
-	            	
-	            	
-	            	
-	            	if (short_array2.length > short_array1.length) {
-	            		for (int i1 = 0; i1 < short_array2.length; i1++) {
-	            			while (i1 < short_array1.length) {
-		        				short read_short = (short) (short_array1[i1] + short_array2[i1]);
-		        				byte b3 = ((byte) (read_short & 0xff));
-		        				byte b4 = ((byte) (read_short >> 8 & 0xff));
-		        				try {
-									out.write(b3);
-									out.write(b4);
-								} catch (IOException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-		        				i1++;
-		        				System.out.println("2 > 1: " + i1);
-	            			}
-	        			}
-	            		
-	            	}
-	            	
-	            	if (short_array1.length > short_array2.length) {
-	            		for (int i1 = 0; i1 < short_array1.length; i1++) {
-		            		while (i1 < short_array2.length) {
-		            			short read_short = (short) (short_array1[i1] + short_array2[i1]);
-		        				byte b3 = ((byte) (read_short & 0xff));
-		        				byte b4 = ((byte) (read_short >> 8 & 0xff));
-		        				try {
-									out.write(b3);
-									out.write(b4);
-								} catch (IOException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-		        				i1++;
-		        				System.out.println("1 > 2: " + i1 + " len: " + short_array2.length);
-	        				}
-		            		short read_short = (short) (short_array1[i1]);
-		            		byte b3 = ((byte) (read_short & 0xff));
-	        				byte b4 = ((byte) (read_short >> 8 & 0xff));
-	        				try {
-								out.write(b3);
-								out.write(b4);
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-	        				System.out.println("more");
-	            		}
-	            	}
-	            		
-	            	
 		    		
-		    	}
+	            	}
 
 	        		
-	        		
+	        
 	        	
         	}
         }
         
-        
-        //Selection "Resample" allows the user to
-        //TODO Make sure the user doesn't resample to the current sample rate. Use pop-up window and do nothing.
-        if (e.getActionCommand().equals("Resample")) {
-        	
-        	if (getTracksList().isEmpty()) {
-        		
-        		JOptionPane no_tracks_notification = new JOptionPane();
-                no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
-        	}
-        	else {
-        		Object[] resample_possible_values = {"44100", "22050", "11025"};
-        		String resample_selected_value = (String) JOptionPane.showInputDialog(null, "Choose a rate to Resample by:", "Resample Rate", JOptionPane.INFORMATION_MESSAGE, null, resample_possible_values, resample_possible_values[0]);
-        		System.out.println("SELECT VALUE " + resample_selected_value);
-        		
-        		int resample_rate = Integer.parseInt(resample_selected_value);
-        		
 
-            	
-            	File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
-            	
-            	FileInputStream in = null;
-            	
-        		try {
-        			in = new FileInputStream(current_file);
-        		} catch (FileNotFoundException e1) {
-        			e1.printStackTrace();
-        		}
-        		
-        		int current_rate = 0;
-        		
-        		try {
-        			for (int i = 0; i<32; i++) {
-        				
-        				while(i < 44 ) {
-        					
-        					byte b1 = (byte) (in.read() & 0xff);
-        					byte b2 = (byte) (in.read() & 0xff);
-        					byte b3 = (byte) (in.read() & 0xff);
-        					byte b4 = (byte) (in.read() & 0xff);
-        					i++;
-        					if (i == 7) {
-        						current_rate = b4 << 24 | b3 << 16 & 0xff0000 | b2 << 8 & 0xff00 | ((int) b1) & 0xff;
-        					}
-        				}
-        				
-        			}
-        			
-        		} catch (IOException t) {
-        			// TODO Auto-generated catch block
-        			t.printStackTrace();
-        		}
-        		
-        		if (current_rate == resample_rate) {
-        			JOptionPane invalid_input_rate_notification = new JOptionPane();
-	        		invalid_input_rate_notification.showMessageDialog(this, "Cannot resample to current sample rate!");
-	        	
-        		}
-        		else {
-        			getMainDisplayWindow().resample(resample_rate);
-        		}
-        		
-        	}
-        	
-        	
-        	/*
-    		Object[] resample_possible_values = {"44100 Hz", "22050 Hz", "11025 Hz"};
-    		String resample_selected_value = (String) JOptionPane.showInputDialog(null, "Choose one", "Input", JOptionPane.INFORMATION_MESSAGE, null, resample_possible_values, resample_possible_values[0]);
-    		System.out.println("SELECT VALUE " + resample_selected_value);
-        	
-    		//getMainDisplayWindow().getCurrentTrack();
-    		 */
-    		
-        }
-        
         
         //Selection "Adjust Amplitude" allows the user to adjust the amplitude of the current track by ..........
         //Here we prompt the user for input, specifically a percentage by which to scale the amplitude. If the user 
@@ -544,71 +317,8 @@ public class MenuBar extends JMenuBar implements ActionListener {
                 
         	}
         	else {
-            	
-            	File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
-            	File write_file = new File(current_file.getPath() + "REVERSE");
-            	
-            	short[] short_array = new short[(int) (getMainDisplayWindow().getTracksList().get(getMainDisplayWindow().getCurrentTrack()).length() - 44)/2];
-            	
-            	FileOutputStream out = null;
-            	FileInputStream in = null;
-            	
-            	
-        		try {
-        			in = new FileInputStream(current_file);
-        			out = new FileOutputStream(write_file);
-        		} catch (FileNotFoundException e1) {
-        			// TODO Auto-generated catch block
-        			e1.printStackTrace();
-        		}
-        		
-        		
-        		
-        		
-        		
-        		try {
-        			for (int i = 0; i<current_file.length()/2; i++) {
-        				
-        				while (i < 44) {
-        					byte b1 = (byte) (in.read() & 0xff);
-        					byte b2 = (byte) (in.read() & 0xff);
-        					out.write(b1);
-        					out.write(b2);
-        					i++;
-        				}
-        				
-        				
-        			byte b1 = (byte) (in.read() & 0xff);
-            		byte b2 = (byte) (in.read() & 0xff);
-            			
-            		short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
-            			
-            		short_array[i-44] = s;
-        			
-        			}
-        			
-        			for(int i = 0; i < short_array.length / 2; i++) {
-        			    short temp = short_array[i];
-        			    short_array[i] = short_array[short_array.length - i - 1];
-        			    short_array[short_array.length - i - 1] = temp;
-        			}
-        			
-        			for(int i = 0; i < short_array.length; i++) {
-        				short read_short = short_array[i];
-        				byte b3 = ((byte) (read_short & 0xff));
-        				byte b4 = ((byte) (read_short >> 8 & 0xff));
-        				out.write(b3);
-        				out.write(b4);
-        			}
-                                getTracksList().add(write_file);
-                                getMainDisplayWindow().addAudioFile(getTracksList().indexOf(write_file));
-        			
-        		} catch (IOException t) {
-        			// TODO Auto-generated catch block
-        			t.printStackTrace();
-        		}
-            	
-            }
+        		getMainDisplayWindow().reverse();
+        	}
         }
     }
     
