@@ -4,7 +4,6 @@ import java.awt.*;
 import java.util.*;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -189,7 +188,9 @@ public class MainDisplayWindow extends JPanel {
     void adjustAmplitudeClip(double scaling_ratio) {
     	
     	File current_file = getTracksList().get(getCurrentTrack());
-    	File write_file = new File("C:\\Users\\Noah\\Desktop\\" + "amplitude_clipped " + getTracksList().get(getCurrentTrack()).getName());
+        StringBuilder sb_current = new StringBuilder(current_file.getPath());
+        sb_current.delete(sb_current.indexOf(".wav"), (sb_current.indexOf(".wav")+4));
+        File write_file = new File(sb_current + "_amplitude_clipped.wav");
         
     	
         
@@ -285,7 +286,9 @@ public class MainDisplayWindow extends JPanel {
     	
     	
     	File current_file = getTracksList().get(getCurrentTrack());
-    	File write_file = new File("C:\\Users\\Noah\\Desktop\\" + getTracksList().get(getCurrentTrack()).getName());
+        StringBuilder sb_current = new StringBuilder(current_file.getPath());
+        sb_current.delete(sb_current.indexOf(".wav"), (sb_current.indexOf(".wav")+4));
+        File write_file = new File(sb_current + "_amplitude_normalized.wav");
         
     	FileOutputStream out = null;
     	FileInputStream in = null;
