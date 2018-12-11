@@ -16,12 +16,8 @@ import javax.swing.*;
  * 
  */
 
-////TODO Actions documentation
-////TODO Resample error throws on null
-
 //The MenuBar class provides the user with various track options via a drop-down menu, and allows
 //the application to handle user selections. 
-
 public class MenuBar extends JMenuBar implements ActionListener {
 
 	/* FIELDS */
@@ -38,74 +34,60 @@ public class MenuBar extends JMenuBar implements ActionListener {
     	//menu drop-downs (e.g., edit_menu) and all the menu buttons (e.g., resample_item).
     	setMainDisplayWindow(main_display_window);
     	setTracksList(tracks_list);
-        JMenu edit_menu, track_menu, effect_menu;
-        JMenuItem cut_item, paste_item, erase_item;
-        JMenuItem merge_item, resample_item;
-        JMenuItem amplitude_item, normalize_item, clip_item, reverse_item;
-        setLayout(new FlowLayout(FlowLayout.LEFT));
+      JMenu edit_menu, track_menu, effect_menu;
+      JMenuItem cut_item, paste_item, erase_item;
+      JMenuItem merge_item, resample_item;
+      JMenuItem amplitude_item, normalize_item, clip_item, reverse_item;
+      setLayout(new FlowLayout(FlowLayout.LEFT));
         
-        //Here we create the drop-downs and the menu buttons, add the menu buttons to the
-        //drop-downs, and add ActionListeners to each menu button.
-        edit_menu = new JMenu("Edit");
-            cut_item = new JMenuItem("Cut");
-            paste_item = new JMenuItem("Paste");
-            erase_item = new JMenuItem("Erase");
-        track_menu = new JMenu("Track");
-            merge_item = new JMenuItem("Merge");
-            resample_item = new JMenuItem("Resample");
-        effect_menu = new JMenu("Effect");
-            amplitude_item = new JMenuItem("Adjust Amplitude");
-            normalize_item = new JMenuItem("Normalize");
-            clip_item = new JMenuItem("Clip Amplitude");
-            reverse_item = new JMenuItem("Reverse");
-            
-        add(edit_menu);
-            edit_menu.add(cut_item);
-            edit_menu.add(paste_item);
-            edit_menu.add(erase_item);
-        add(track_menu);
-            track_menu.add(merge_item);
-            track_menu.add(resample_item);
-        add(effect_menu);
-            effect_menu.add(amplitude_item);
-            effect_menu.add(normalize_item);
-            effect_menu.add(clip_item);
-            effect_menu.add(reverse_item);
-        
-        cut_item.addActionListener(this);
-        paste_item.addActionListener(this);
-        erase_item.addActionListener(this);
-        merge_item.addActionListener(this);
-        resample_item.addActionListener(this);
-        amplitude_item.addActionListener(this);
-        normalize_item.addActionListener(this);
-        clip_item.addActionListener(this);
-        reverse_item.addActionListener(this);
-        
+      //Here we create the drop-downs and the menu buttons, add the menu buttons to the
+      //drop-downs, and add ActionListeners to each menu button.
+      edit_menu = new JMenu("Edit");
+          erase_item = new JMenuItem("Erase");
+      track_menu = new JMenu("Track");
+          merge_item = new JMenuItem("Merge");
+      effect_menu = new JMenu("Effect");
+          amplitude_item = new JMenuItem("Adjust Amplitude");
+          reverse_item = new JMenuItem("Reverse");
+
+      add(edit_menu);
+          edit_menu.add(erase_item);
+      add(track_menu);
+          track_menu.add(merge_item);
+      add(effect_menu);
+          effect_menu.add(amplitude_item);
+          effect_menu.add(reverse_item);
+
+      erase_item.addActionListener(this);
+      merge_item.addActionListener(this);
+      amplitude_item.addActionListener(this);
+      reverse_item.addActionListener(this);
+
     }    
 
     //All actions utilize a "checker" to ensure that the tracks_list is not empty, and therefore 
     //the user has a track to interact with. This is the first thing done with every action.
     @Override
     public void actionPerformed(ActionEvent e) {
- 
-        //Selection "Erase" allows the user to
+    	
+        //Selection "Erase" allows the user to remove audio from the selected file.
+        //The function goes through each byte and sets it to zero, essentially silencing it.
         if (e.getActionCommand().equals("Erase")) {
         	
         	if (getTracksList().isEmpty()) {
         	
         		JOptionPane no_tracks_notification = new JOptionPane();
-                no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
+                        no_tracks_notification.showMessageDialog(this, "No Tracks to Edit!");
         	
         	}
         	else {
+
         		getMainDisplayWindow().erase();
         	}
         }
         
         
-        //Selection "Merge" allows the user to smash two file waveforms together. This is 
-        //accomplished by...
+        //Selection "Merge" allows the user to combine two file waveforms
         //First we check to see if tracks_list has two or more tracks. If there is not, we notify
         //the user with a pop-up window, do nothing, and return to the main display. Otherwise, we
         //prompt the user to select a track to merge the current track with. If the user cancels
@@ -119,6 +101,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         		need_two_or_more_tracks_notification.showMessageDialog(this, "Need two or more tracks in order to Merge!");
         	
         	}
+
         	else {
         	
         		//merge_possible_values works as the options for the drop-down menu from which the user can 
@@ -224,17 +207,11 @@ public class MenuBar extends JMenuBar implements ActionListener {
 	        			getMainDisplayWindow().merge(merge_selected_file);
 	        		}
 		    		
-	            	}
-
-	        		
-	        
-	        	
+	          }
         	}
         }
         
-
-        
-        //Selection "Adjust Amplitude" allows the user to adjust the amplitude of the current track by ..........
+        //Selection "Adjust Amplitude" allows the user to adjust the amplitude of the current track using a percentage multiplier of their designation
         //Here we prompt the user for input, specifically a percentage by which to scale the amplitude. If the user 
         //enters an in valid input (i.e., a number not between 0-1000, nothing at all, a character, etc.), a pop-up 
         //message is shown and nothing is done. The user can cancel the operation by pressing the cancel button.
@@ -307,7 +284,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         }
         
         
-        //Selection "Reverse" allows the user to
+        //Selection "Reverse" allows the user to make a new track that essentially plays the original track backwards
         if (e.getActionCommand().equals("Reverse")) {
         	
         	if (getTracksList().isEmpty()) {
@@ -317,6 +294,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
                 
         	}
         	else {
+
         		getMainDisplayWindow().reverse();
         	}
         }

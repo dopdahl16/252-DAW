@@ -23,7 +23,7 @@ public class AudioDisplayContainer extends JPanel {
 	public File track;
 	public MainDisplayWindow main_display_window;
 	
-	
+  
 	/* CONSTRUCTOR */
 	
     public AudioDisplayContainer(MainDisplayWindow main_display_window, File track) {
@@ -34,19 +34,19 @@ public class AudioDisplayContainer extends JPanel {
     	//and AudioFileInfo objects for our respective track.
     	setTrack(track);
     	setMainDisplayWindow(main_display_window);
-        setLayout(new BorderLayout());
-        setBorder(BorderFactory.createLineBorder(Color.green));
-        setMinimumSize(new Dimension(500,10));
+      setLayout(new BorderLayout());
+      setBorder(BorderFactory.createLineBorder(Color.green));
+      setMinimumSize(new Dimension(500,10));
         
-        AudioFileVisualDisplay audio_file_display = new AudioFileVisualDisplay();
-        AudioFileInfo audio_file_info = new AudioFileInfo(this, getMainDisplayWindow(), getTrack());
+      AudioFileVisualDisplay audio_file_display = new AudioFileVisualDisplay()
+      AudioFileInfo audio_file_info = new AudioFileInfo(this, getMainDisplayWindow(), getTrack());
         
-        add(audio_file_info, BorderLayout.LINE_START);
-        add(audio_file_display, BorderLayout.LINE_END);
+      add(audio_file_info, BorderLayout.LINE_START);
+      add(audio_file_display, BorderLayout.LINE_END);
 
     }
-
-    
+  
+  
     /* ACCESSORS */
     
     File getTrack() {

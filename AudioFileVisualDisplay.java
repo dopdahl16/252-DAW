@@ -11,9 +11,7 @@ import javax.swing.*;
  * 
  */
 
-/*
-DOCUMENTATION
-*/
+//CONSTRUCTOR//
 
 public class AudioFileVisualDisplay extends JPanel {
     

@@ -40,8 +40,8 @@ public class ToolBar extends JToolBar implements ActionListener {
     
     public ToolBar(MainDisplayWindow main_display_window, FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list, Long initial_position) {
         
-    	//Here we set the main_display_window, tracks_list, and file_explorer_window as well as locally 
-    	//declare and set positions for track playback purposes
+        //Here we set the main_display_window, tracks_list, and file_explorer_window as well as locally 
+        //declare and set positions for track playback purposes
         setFloatable(false); 
         setFileExplorerWindow(file_explorer_window);
         setTracksList(tracks_list);
