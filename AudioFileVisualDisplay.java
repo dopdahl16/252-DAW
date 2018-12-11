@@ -1,7 +1,6 @@
 package daw;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 
 /**
@@ -16,17 +15,12 @@ import javax.swing.*;
 DOCUMENTATION
 */
 
-public class AudioFileVisualDisplay extends JPanel implements ActionListener {
+public class AudioFileVisualDisplay extends JPanel {
     
     public AudioFileVisualDisplay() {
         
         setBorder(BorderFactory.createLineBorder(Color.blue));
         setPreferredSize(new Dimension(Integer.MAX_VALUE,100));
         
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
