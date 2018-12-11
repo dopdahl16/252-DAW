@@ -3,14 +3,10 @@ package daw;
 import java.awt.*;
 import java.util.*;
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  *
@@ -20,33 +16,29 @@ import java.io.IOException;
  * 
  */
 
-/*
-DOCUMENTATION
-*/
-
-
-
-////TODO Close all filestreams!!!!!!!!
-
+//The MainDisplayWindow class is where our audio display swing components and is where our audio
+//information is held (e.g., tracks_list). MainDisplayWindow acts as the hub for all file editing,
+//as well as the container for our audio display objects.
 
 public class MainDisplayWindow extends JPanel {
     
+	/* FIELDS */
+	
 	public ProgramFrame program_frame;
 	public ArrayList<File> tracks_list;
 	public File track;
+	//track_index and current_track differ in function: track_index is for creating the audio files 
+	//in AudioDisplayContainer,AudioFileInfo, and AudioFileVisualDisplay. current_track is for 
+	//playback purposes ONLY.
 	public int track_index;
 	public int current_track;
 	private AudioInputStream our_audio_stream;
-	//public ArrayList<AudioDisplayContainer> audio_display_container_list;
-    //private Clip our_clip;
-    //private AudioFormat format;
-    //private Long currentPosition;
-    //private String status;
-	//	track_index is for creating the audio files in AudioDisplayContainer,AudioFileInfo, and AudioFileVisualDisplay only
-	//	current_track is for playback purposes ONLY
+	
+	/* CONSTRUCTOR */
 	
     public MainDisplayWindow(ProgramFrame program_frame, ArrayList<File> tracks_list, int current_track) {
         
+    	//Here we set relevant playback variables and set our layout.
     	setTracksList(tracks_list);
     	setProgramFrame(program_frame);
     	setCurrentTrack(current_track);
@@ -55,6 +47,10 @@ public class MainDisplayWindow extends JPanel {
         
     }
     
+    //addAudioFile adds an audio file to the MainDisplayWindow using track_index, as any audio file
+    //a user wishes to add will already be in tracks_list when this method is called. We create an
+    //AudioDisplayContainer for the track, add it to MainDisplayWindow and then repaint. We do not
+    //reset current_track when we add and audio file.
     void addAudioFile(int track_index) {
     	
     	AudioDisplayContainer new_container = new AudioDisplayContainer(this, getTracksList().get(track_index));
@@ -66,6 +62,13 @@ public class MainDisplayWindow extends JPanel {
 		
     }
     
+    //removeAudioFile first removes the AudioDisplayContainer object from our MainDisplayWindow. Next,
+    //it repaints. Then, it checks to see if the track the was inside of the removed AudioDisplayContainer 
+    //object was the track at index 0 in tracks_list. If it was, it resets new_idex to zero so that
+    //new_idex can set our_current_track_display to a valid track. If it wasn't, it drops new_index to
+    //the next track so that our_current_track_display can be set to that track. Finally, we remove the 
+    //track from tracks_list, set the current track in ProgramFrame, repaint both the ProgramFrame and
+    //our_current_track_display and then set current_track.
     void removeAudioFile(AudioDisplayContainer audio_display_container) {
     	
     	remove(audio_display_container);
@@ -91,6 +94,8 @@ public class MainDisplayWindow extends JPanel {
     	
     }
    
+    //selectTrack sets current_track to a different track in tracks_list in both here and ProgramFrame,
+    //then it repaints both the ProgramFrame and our_current_track_display.
     void selectTrack(File selected_track) {
     	setCurrentTrack(getTracksList().indexOf(selected_track));
     	getProgramFrame().setCurrentTrack(getTracksList().indexOf(selected_track));
@@ -99,8 +104,9 @@ public class MainDisplayWindow extends JPanel {
     	getProgramFrame().revalidate();
     	getProgramFrame().repaint();
     }
-    
-    
+/*
+    //resample creates a write_file to write the resampled track to. It also creates a FileInputStream 
+    //out of current_file and a FileOutputStream out of write_file. Then, 
     void resample(int resample_rate) {
     	
     	File current_file = getTracksList().get(getCurrentTrack());
@@ -174,40 +180,28 @@ public class MainDisplayWindow extends JPanel {
 		}
     	
     }
+*/
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    //adjustAmplitudeClip creates a write_file to write the edited track to. It also creates a FileInputStream 
+    //out of current_file and a FileOutputStream out of write_file. Then, it copies the file header of the .wav
+    //file from the FileOutputStream to the FileInputStream. Then, it reads in a pair of bytes, smashes the two
+    //bytes into a short, multiplies the short by scaling_ratio, then extracts the two bytes from the short. If
+    //either of the two bytes are greater than their max value of 127, they are reset to 127. Finally the two 
+    //modified bytes are written out to the FileOutputStream. Finally we automatically add write_file to 
+    //tracks_list and this using addAudioFile.
     void adjustAmplitudeClip(double scaling_ratio) {
     	
     	File current_file = getTracksList().get(getCurrentTrack());
     	File write_file = new File("C:\\Users\\Noah\\Desktop\\" + "amplitude_clipped " + getTracksList().get(getCurrentTrack()).getName());
         
-    	
-        
     	FileOutputStream out = null;
     	FileInputStream in = null;
-    	
     	
 		try {
 			in = new FileInputStream(current_file);
 			out = new FileOutputStream(write_file);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		
-		
-		
+		} 
+		catch (Exception file_not_found) {}
 		
 		try {
 			for (int i = 0; i<(current_file.length()/2); i++) {
@@ -215,11 +209,8 @@ public class MainDisplayWindow extends JPanel {
 				while (i < 44) {
 					byte b1 = (byte) (in.read() & 0xff);
 					byte b2 = (byte) (in.read() & 0xff);
-					System.out.println(b1 + " " + b2 + " ");
 					out.write(b1);
 					out.write(b2);
-					System.out.println(b1 + " " + b2 + " ");
-					System.out.println(i);
 					i++;
 				}
 				
@@ -253,36 +244,25 @@ public class MainDisplayWindow extends JPanel {
 				out.write(b4);
 			
 			}
+			
 		getTracksList().add(write_file);
-                this.addAudioFile(getTracksList().indexOf(write_file));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		addAudioFile(getTracksList().indexOf(write_file));
+		
+		} 
+		catch (Exception could_not_read_write_to_iostreams) {}
     	
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    //adjustAmplitudeNormalize creates a write_file to write the edited track to. It also creates a FileInputStream 
+    //out of current_file and a FileOutputStream out of write_file. Then, it copies the file header of the .wav
+    //file from the FileOutputStream to the FileInputStream. Then, it reads through all of the audio data and finds
+    //the largest byte, stored as max_byte. It then modifies scaling_ratio so that no byte multiplied by scaling_ratio 
+    //is greater than 127. Then, we close the FileInputStream and reopen it to read through it again. Finally, we go 
+    //through FileInputStream, reading in a pair of bytes, smashing the two bytes into a short, multiplying the short 
+    //by adjusted_scaling_ratio, then extracting the two bytes from the short. Finally the two modified bytes are 
+    //written out to the FileOutputStream. Finally we automatically add write_file to tracks_list and this using 
+    //addAudioFile.
     void adjustAmplitudeNormalize(double scaling_ratio) {
-    	
-    	
     	
     	File current_file = getTracksList().get(getCurrentTrack());
     	File write_file = new File("C:\\Users\\Noah\\Desktop\\" + getTracksList().get(getCurrentTrack()).getName());
@@ -293,17 +273,10 @@ public class MainDisplayWindow extends JPanel {
 		try {
 			in = new FileInputStream(current_file);
 			out = new FileOutputStream(write_file);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		//If scaling_ratio <= 1, don't have to do this
+		} catch (Exception file_not_found) {}
 		
 		double adjusted_scaling_ratio;
 		byte max_byte = 0;
-		
-		
 		
 		try {
 			
@@ -328,7 +301,7 @@ public class MainDisplayWindow extends JPanel {
 			}
 			System.out.println("MAX B : " + max_byte);
 		}
-		catch (Exception could_not_read_from_FileInputStream) {}
+		catch (Exception could_not_read_write_to_iostreams) {}
 		
 		
 		
@@ -339,18 +312,11 @@ public class MainDisplayWindow extends JPanel {
 			adjusted_scaling_ratio = scaling_ratio;
 		}
 		
-		
-		
 		try {
 			in.close();
 			in = new FileInputStream(current_file);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
+		catch (Exception file_not_found) {}
 		
 		
 		
@@ -386,10 +352,61 @@ public class MainDisplayWindow extends JPanel {
                 getTracksList().add(write_file);
                 this.addAudioFile(getTracksList().indexOf(write_file));
 			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} catch (Exception could_not_read_write_to_iostreams) {}
+    	
+    
+    	
+    }
+    
+    void erase() {
+
+    	
+    	File current_file = getTracksList().get(getCurrentTrack());
+    	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "1" + getTracksList().get(getCurrentTrack()).getName());
+    	
+    	FileOutputStream out = null;
+    	FileInputStream in = null;
+    	
+    	
+		try {
+			in = new FileInputStream(current_file);
+			out = new FileOutputStream(write_file);
+		} 
+		catch (Exception file_not_found) {}
+		
+		
+		
+		
+		
+		try {
+			for (int i = 0; i<(current_file.length()/2); i++) {
+				
+				while (i < 44) {
+					byte b1 = (byte) (in.read() & 0xff);
+					byte b2 = (byte) (in.read() & 0xff);
+					System.out.println(b1 + " " + b2 + " ");
+					out.write(b1);
+					out.write(b2);
+					System.out.println(b1 + " " + b2 + " ");
+					System.out.println(i);
+					i++;
+				}
+				
+				
+			byte b1 = (byte) (in.read() & 0xff);
+			byte b2 = (byte) (in.read() & 0xff);
+			
+			short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
+			
+				s = (short) 0;
+				byte b3 = ((byte) (s & 0xff));
+				byte b4 = ((byte) (s >> 8 & 0xff));
+				out.write(b3);
+				out.write(b4);
+			
+			}
+			
+		} catch (Exception could_not_read_write_to_iostreams) {}
     	
     
     	
@@ -398,6 +415,193 @@ public class MainDisplayWindow extends JPanel {
     
     
     
+    
+    
+    void merge(File merge_selected_file) {
+    	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + merge_selected_file.getName() + "_merge_" + getTracksList().get(getCurrentTrack()).getName());
+    	
+    	short[] short_array1 = new short[(int) (merge_selected_file.length() - 44)/2];
+    	short[] short_array2 = new short[(int) (getTracksList().get(getCurrentTrack()).length() - 44)/2];
+    	
+    	FileOutputStream out = null;
+    	FileInputStream in1 = null;
+    	FileInputStream in2 = null;
+    	
+    	try {
+			in1 = new FileInputStream(merge_selected_file);
+			in2 = new FileInputStream(getTracksList().get(getCurrentTrack()));
+			out = new FileOutputStream(write_file);
+		} catch (Exception file_not_found) {}
+    	
+    	try {
+			for (int i1 = 0; i1<merge_selected_file.length()/2; i1++) {
+				
+				while (i1 < 44) {
+					byte b1 = (byte) (in1.read() & 0xff);
+					byte b2 = (byte) (in1.read() & 0xff);
+					i1++;
+				}
+				
+				
+			byte b1 = (byte) (in1.read() & 0xff);
+    		byte b2 = (byte) (in1.read() & 0xff);
+    			
+    		short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
+    			
+    		short_array1[i1-44] = s;
+			
+    		System.out.println("Reading into array1");
+    		
+			}
+			
+		} catch (Exception could_not_read_write_to_iostreams) {}
+    	
+    	
+    	
+    	
+    	
+    	try {
+			for (int i1 = 0; i1<getTracksList().get(getCurrentTrack()).length()/2; i1++) {
+				
+				while (i1 < 44) {
+					byte b1 = (byte) (in2.read() & 0xff);
+					byte b2 = (byte) (in2.read() & 0xff);
+					out.write(b1);
+					out.write(b2);
+					i1++;
+				}
+				
+				
+			byte b1 = (byte) (in2.read() & 0xff);
+    		byte b2 = (byte) (in2.read() & 0xff);
+    			
+    		short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
+    			
+    		short_array2[i1-44] = s;
+			
+    		System.out.println("Reading into array2");
+    		
+			}
+			
+		} catch (Exception could_not_read_write_to_iostreams) {}
+    	
+    	
+    	
+    	if (short_array2.length > short_array1.length) {
+    		for (int i1 = 0; i1 < short_array2.length; i1++) {
+    			while (i1 < short_array1.length) {
+    				short read_short = (short) (short_array1[i1] + short_array2[i1]);
+    				byte b3 = ((byte) (read_short & 0xff));
+    				byte b4 = ((byte) (read_short >> 8 & 0xff));
+    				try {
+						out.write(b3);
+						out.write(b4);
+					} catch (Exception could_not_read_write_to_iostreams) {}
+    				i1++;
+    				System.out.println("2 > 1: " + i1);
+    			}
+			}
+    		
+    	}
+    	
+    	if (short_array1.length > short_array2.length) {
+    		for (int i1 = 0; i1 < short_array1.length; i1++) {
+        		while (i1 < short_array2.length) {
+        			short read_short = (short) (short_array1[i1] + short_array2[i1]);
+    				byte b3 = ((byte) (read_short & 0xff));
+    				byte b4 = ((byte) (read_short >> 8 & 0xff));
+    				try {
+						out.write(b3);
+						out.write(b4);
+					} catch (Exception could_not_read_write_to_iostreams) {}
+    				i1++;
+    				System.out.println("1 > 2: " + i1 + " len: " + short_array2.length);
+				}
+        		short read_short = (short) (short_array1[i1]);
+        		byte b3 = ((byte) (read_short & 0xff));
+				byte b4 = ((byte) (read_short >> 8 & 0xff));
+				try {
+					out.write(b3);
+					out.write(b4);
+				} catch (Exception could_not_read_write_to_iostreams) {}
+				System.out.println("more");
+    		}
+    	}
+    		
+    	
+		
+	
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    void reverse() {
+
+    	
+    	File current_file = getTracksList().get(getCurrentTrack());
+    	File write_file = new File(current_file.getPath() + "REVERSE");
+    	
+    	short[] short_array = new short[(int) (getTracksList().get(getCurrentTrack()).length() - 44)/2];
+    	
+    	FileOutputStream out = null;
+    	FileInputStream in = null;
+    	
+    	
+		try {
+			in = new FileInputStream(current_file);
+			out = new FileOutputStream(write_file);
+		} catch (Exception file_not_found) {}
+		
+		
+		
+		
+		
+		try {
+			for (int i = 0; i<current_file.length()/2; i++) {
+				
+				while (i < 44) {
+					byte b1 = (byte) (in.read() & 0xff);
+					byte b2 = (byte) (in.read() & 0xff);
+					out.write(b1);
+					out.write(b2);
+					i++;
+				}
+				
+				
+			byte b1 = (byte) (in.read() & 0xff);
+    		byte b2 = (byte) (in.read() & 0xff);
+    			
+    		short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
+    			
+    		short_array[i-44] = s;
+			
+			}
+			
+			for(int i = 0; i < short_array.length / 2; i++) {
+			    short temp = short_array[i];
+			    short_array[i] = short_array[short_array.length - i - 1];
+			    short_array[short_array.length - i - 1] = temp;
+			}
+			
+			for(int i = 0; i < short_array.length; i++) {
+				short read_short = short_array[i];
+				byte b3 = ((byte) (read_short & 0xff));
+				byte b4 = ((byte) (read_short >> 8 & 0xff));
+				out.write(b3);
+				out.write(b4);
+			}
+                        getTracksList().add(write_file);
+                        addAudioFile(getTracksList().indexOf(write_file));
+			
+		} catch (Exception could_not_read_write_to_iostreams) {}
+    	
+    
+    }
     
     
     
@@ -442,17 +646,4 @@ public class MainDisplayWindow extends JPanel {
         return our_audio_stream;
 
     }
-    
-    private void setAudioInputStream(File other) {
-        try{
-         our_audio_stream = AudioSystem.getAudioInputStream(other);
-        }
-        catch (Exception excep) {
-            
-        }
-     }
-    
 }
-
-//byte[] byte_array = new byte[(int) current_file.length()];
-
