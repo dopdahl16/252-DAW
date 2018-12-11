@@ -20,7 +20,6 @@ import javax.swing.JFrame;
  * 
  */
 
-////TODO REPLACE DESKTOP SAVING OF STATE PATH WITH "src/data/state_restore/state.ser"
 
 //The ProgramFrame class is where our swing components are added and we hold "global" objects e.g., 
 //current_track. These objects are needed by most components are thus are stored at the highest
@@ -30,7 +29,7 @@ public class ProgramFrame extends JFrame {
 	
 	/* FIELDS */
 	
-	private static final String our_title = "DAW";
+    private static final String our_title = "DAW";
     public static ArrayList<File> tracks_list = new ArrayList<File>();
     public static int current_track;
     public static MainDisplayWindow our_main_display_window;
@@ -48,12 +47,12 @@ public class ProgramFrame extends JFrame {
     	//First we check to see if there is a saved state of the application at the designated file
     	//path. If there is, we read in the saved objects (ArrayList<File>, long, int) and set them
     	//to be this ProgramFrame's tracks_list, position, and current_track, respectively.
-    	File restore_state = new File("C:\\\\Users\\\\dopda\\\\Desktop\\\\DAWSTORAGE\\\\state.ser");
+    	File restore_state = new File("src/data/saveStates/state.ser");
     	
     	if(restore_state.exists() && !restore_state.isDirectory()) { 
     		
     		try {
-    	        FileInputStream fileIn = new FileInputStream("C:\\\\Users\\\\dopda\\\\Desktop\\\\DAWSTORAGE\\\\state.ser");
+    	        FileInputStream fileIn = new FileInputStream("src/data/saveStates/state.ser");
     	        ObjectInputStream in = new ObjectInputStream(fileIn);
     	        setTracksList((ArrayList<File>) in.readObject());
     	        position = (long) in.readObject();
@@ -98,7 +97,7 @@ public class ProgramFrame extends JFrame {
 						//resume the same clip in the same place on restart. However, if that is not 
 						//possible (e.g., there is no clip object in our_tool_bar), then we simply 
 						//write a "0". Then, we write current_track and close our streams.
-	                	FileOutputStream destination_file = new FileOutputStream(new File("C:\\Users\\dopda\\Desktop\\DAWSTORAGE\\state.ser"));
+	                	FileOutputStream destination_file = new FileOutputStream(new File("src/data/saveStates/state.ser"));
 	                	ObjectOutputStream obj_output_stream = new ObjectOutputStream(destination_file);
 	                	obj_output_stream.writeObject(getTracksList());
 	                	
@@ -116,7 +115,7 @@ public class ProgramFrame extends JFrame {
 			        }
 			        else {
 			        	
-			        	File previous_state = new File("C:\\\\Users\\\\dopda\\\\Desktop\\\\DAWSTORAGE\\\\state.ser");
+			        	File previous_state = new File("src/data/saveStates/state.ser");
 			        	
 			        	if(previous_state.exists() && !previous_state.isDirectory()) {
 			        		
