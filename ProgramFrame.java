@@ -7,7 +7,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import javax.swing.JFrame;
@@ -19,8 +18,6 @@ import javax.swing.JFrame;
  * @author nteste01 Teboho Nteso
  * 
  */
-
-////TODO REPLACE DESKTOP SAVING OF STATE PATH WITH "src/data/state_restore/state.ser"
 
 //The ProgramFrame class is where our swing components are added and we hold "global" objects e.g., 
 //current_track. These objects are needed by most components are thus are stored at the highest
@@ -63,16 +60,7 @@ public class ProgramFrame extends JFrame {
     	        fileIn.close();
     	      } 
     		
-    		catch (IOException i) {
-    	         i.printStackTrace();
-    	         return;
-    	      } 
-    		
-    		catch (ClassNotFoundException c) {
-    	         System.out.println("Class not found");
-    	         c.printStackTrace();
-    	         return;
-    	      }
+    		catch (Exception could_not_open_restore_state) {} 
     		
     	}
     	
@@ -135,9 +123,7 @@ public class ProgramFrame extends JFrame {
                 }
 				//This catch clause catches all IOExceptions that may be throw while the streams are
 				//writing or opening.
-                catch (IOException i) {
-                	i.printStackTrace();
-                }
+                catch (Exception could_not_save_state) {}
             }
         });
         
@@ -250,7 +236,7 @@ public class ProgramFrame extends JFrame {
         //our_current_track_display, e.g., empty tracks_list, current_track does not exist.
         //If such an error occurs, it means there is no current track, so we set the text of
         //our_current_track_display accordingly.
-        catch (Exception except) {
+        catch (Exception no_current_track_to_display) {
         	our_current_track_display.setText("No Current Track");
         }
         
