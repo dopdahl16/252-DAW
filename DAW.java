@@ -48,6 +48,7 @@ public class DAW {
 GENERAL TO DO BEFORE FINAL TURN IN:
 Make sure all try-catch blocks are in order
 Commentation
+Rename Excdptions!
 Indentation and perfect white space
 check public/private field declarations
 variable names in the 

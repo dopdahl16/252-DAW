@@ -19,6 +19,7 @@ import javax.swing.*;
  */
 
 ////TODO Actions documentation
+////TODO Resample error throws on null
 
 //The MenuBar class provides the user with various track options via a drop-down menu, and allows
 //the application to handle user selections. 
@@ -203,6 +204,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         	
         		//merge_possible_values works as the options for the drop-down menu from which the user can 
         		//select a track to merge with the current track
+        		File merge_selected_file = null;
 	        	Object[] merge_possible_values = new Object[getTracksList().size()];
 	        	int i;
 	        	
@@ -217,13 +219,169 @@ public class MenuBar extends JMenuBar implements ActionListener {
 	        		}
 	        	}
 	        	
-	        	try {
-		    		File merge_selected_value = (File) JOptionPane.showInputDialog(null, "Select a Track to Merge With", "Merge Tracks", JOptionPane.INFORMATION_MESSAGE, null, merge_possible_values, merge_possible_values[0]);
-	        	}
-	        	catch (Exception excpt) {
-	        		JOptionPane can_not_merge_tracks_notification = new JOptionPane();
-	        		can_not_merge_tracks_notification.showMessageDialog(this, "Select a valid Track to merge with");
-	        	}
+	        	String merge_selected_file_string = (String) JOptionPane.showInputDialog(null, "Select a Track to Merge With", "Merge Tracks", JOptionPane.INFORMATION_MESSAGE, null, merge_possible_values, merge_possible_values[0]);
+		    		
+		    	System.out.println(merge_selected_file_string);
+		    		
+		    	for (i=0; i<getTracksList().size(); i++) {
+		    		if (merge_selected_file_string.equals(getTracksList().get(i).getName())) {
+		   				
+		    			merge_selected_file = getTracksList().get(i);
+		   				
+		   			}
+	    		}
+	    		
+		    	if (merge_selected_file_string == null) {
+		    		
+		   			JOptionPane can_not_merge_with_null = new JOptionPane();
+		   			can_not_merge_with_null.showMessageDialog(this, "Select a valid Track to merge with");
+		       		
+		   		}
+	    		else {
+	    			
+	    			
+	    			
+	    			////MUST CHECK AND SEE IF BOTH HAVE SAME SAMPLE RATE
+	    			
+	    			
+	    			
+		    		System.out.println(merge_selected_file.getName());
+		    		
+	            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + merge_selected_file.getName() + "_merge_" + getTracksList().get(getMainDisplayWindow().getCurrentTrack()).getName());
+	            	
+	            	short[] short_array1 = new short[(int) (merge_selected_file.length() - 44)/2];
+	            	short[] short_array2 = new short[(int) (getTracksList().get(getMainDisplayWindow().getCurrentTrack()).length() - 44)/2];
+	            	
+	            	FileOutputStream out = null;
+	            	FileInputStream in1 = null;
+	            	FileInputStream in2 = null;
+	            	
+	            	try {
+	        			in1 = new FileInputStream(merge_selected_file);
+	        			in2 = new FileInputStream(getTracksList().get(getMainDisplayWindow().getCurrentTrack()));
+	        			out = new FileOutputStream(write_file);
+	        		} catch (FileNotFoundException e1) {
+	        			// TODO Auto-generated catch block
+	        			e1.printStackTrace();
+	        		}
+	            	
+	            	try {
+	        			for (int i1 = 0; i1<merge_selected_file.length()/2; i1++) {
+	        				
+	        				while (i1 < 44) {
+	        					byte b1 = (byte) (in1.read() & 0xff);
+	        					byte b2 = (byte) (in1.read() & 0xff);
+	        					i1++;
+	        				}
+	        				
+	        				
+	        			byte b1 = (byte) (in1.read() & 0xff);
+	            		byte b2 = (byte) (in1.read() & 0xff);
+	            			
+	            		short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
+	            			
+	            		short_array1[i1-44] = s;
+	        			
+	            		System.out.println("Reading into array1");
+	            		
+	        			}
+	        			
+	        		} catch (IOException t) {
+	        			// TODO Auto-generated catch block
+	        			t.printStackTrace();
+	        		}
+	            	
+	            	
+	            	
+	            	
+	            	
+	            	try {
+	        			for (int i1 = 0; i1<getTracksList().get(getMainDisplayWindow().getCurrentTrack()).length()/2; i1++) {
+	        				
+	        				while (i1 < 44) {
+	        					byte b1 = (byte) (in2.read() & 0xff);
+	        					byte b2 = (byte) (in2.read() & 0xff);
+	        					out.write(b1);
+	        					out.write(b2);
+	        					i1++;
+	        				}
+	        				
+	        				
+	        			byte b1 = (byte) (in2.read() & 0xff);
+	            		byte b2 = (byte) (in2.read() & 0xff);
+	            			
+	            		short s = ((short) (b2 << 8 | (((int) b1) & 0xff) & 0xffff));
+	            			
+	            		short_array2[i1-44] = s;
+	        			
+	            		System.out.println("Reading into array2");
+	            		
+	        			}
+	        			
+	        		} catch (IOException t) {
+	        			// TODO Auto-generated catch block
+	        			t.printStackTrace();
+	        		}
+	            	
+	            	
+	            	
+	            	if (short_array2.length > short_array1.length) {
+	            		for (int i1 = 0; i1 < short_array2.length; i1++) {
+	            			while (i1 < short_array1.length) {
+		        				short read_short = (short) (short_array1[i1] + short_array2[i1]);
+		        				byte b3 = ((byte) (read_short & 0xff));
+		        				byte b4 = ((byte) (read_short >> 8 & 0xff));
+		        				try {
+									out.write(b3);
+									out.write(b4);
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+		        				i1++;
+		        				System.out.println("2 > 1: " + i1);
+	            			}
+	        			}
+	            		
+	            	}
+	            	
+	            	if (short_array1.length > short_array2.length) {
+	            		for (int i1 = 0; i1 < short_array1.length; i1++) {
+		            		while (i1 < short_array2.length) {
+		            			short read_short = (short) (short_array1[i1] + short_array2[i1]);
+		        				byte b3 = ((byte) (read_short & 0xff));
+		        				byte b4 = ((byte) (read_short >> 8 & 0xff));
+		        				try {
+									out.write(b3);
+									out.write(b4);
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+		        				i1++;
+		        				System.out.println("1 > 2: " + i1 + " len: " + short_array2.length);
+	        				}
+		            		short read_short = (short) (short_array1[i1]);
+		            		byte b3 = ((byte) (read_short & 0xff));
+	        				byte b4 = ((byte) (read_short >> 8 & 0xff));
+	        				try {
+								out.write(b3);
+								out.write(b4);
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+	        				System.out.println("more");
+	            		}
+	            	}
+	            		
+	            	
+		    		
+		    	}
+
+	        		
+	        		
+	        	
         	}
         }
         
