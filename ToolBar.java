@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.swing.*;
 import java.io.File;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -19,8 +18,6 @@ import javax.sound.sampled.Clip;
  * @author nteste01 Teboho Nteso
  * 
  */
-
-////TODO NEED TO SET EXCEPTIONS
 
 //The TooBar class provides the user with the ability to control track playback and to show or hide 
 //the FileExplorerWindow
@@ -43,8 +40,8 @@ public class ToolBar extends JToolBar implements ActionListener {
     
     public ToolBar(MainDisplayWindow main_display_window, FileExplorerWindow file_explorer_window, ArrayList<File> tracks_list, Long initial_position) {
         
-    	//Here we set the main_display_window, tracks_list, and file_explorer_window as well as locally 
-    	//declare and set positions for track playback purposes
+        //Here we set the main_display_window, tracks_list, and file_explorer_window as well as locally 
+        //declare and set positions for track playback purposes
         setFloatable(false); 
         setFileExplorerWindow(file_explorer_window);
         setTracksList(tracks_list);
