@@ -2,21 +2,8 @@ package daw;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
-import java.util.*;
-import java.util.*;
 import javax.swing.*;
-import java.awt.EventQueue;
-import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.Serializable;
-import java.net.URL;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.sound.sampled.*;
 
 /**
  *
@@ -26,17 +13,25 @@ import javax.sound.sampled.*;
  * 
  */
 
-/*
-DOCUMENTATION
-*/
+//The AudioDisplayContainer class serves as a container component for AudioFileInfo objects and 
+//AudioFileVisualDisplay objects.
 
-public class AudioDisplayContainer extends JPanel implements ActionListener {
+public class AudioDisplayContainer extends JPanel {
     
+	/* FIELDS */
+	
 	public File track;
 	public MainDisplayWindow main_display_window;
 	
+	
+	/* CONSTRUCTOR */
+	
     public AudioDisplayContainer(MainDisplayWindow main_display_window, File track) {
         
+    	//The AudioDisplayContainer constructor is given a main_display_window and a track. After
+    	//setting the track, main_display_window for functional purposes and layout, border and
+    	//minimumsize for display and astetic purposes, we create and add the AudioFileVisualDisplay
+    	//and AudioFileInfo objects for our respective track.
     	setTrack(track);
     	setMainDisplayWindow(main_display_window);
         setLayout(new BorderLayout());
@@ -44,31 +39,32 @@ public class AudioDisplayContainer extends JPanel implements ActionListener {
         setMinimumSize(new Dimension(500,10));
         
         AudioFileVisualDisplay audio_file_display = new AudioFileVisualDisplay();
-        AudioFileInfo audio_file_info = new AudioFileInfo(this,getMainDisplayWindow(), getTrack());
+        AudioFileInfo audio_file_info = new AudioFileInfo(this, getMainDisplayWindow(), getTrack());
         
         add(audio_file_info, BorderLayout.LINE_START);
         add(audio_file_display, BorderLayout.LINE_END);
 
-        
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
     
-    File getTrack(){
+    /* ACCESSORS */
+    
+    File getTrack() {
         return track;
     }
     
-    void setTrack(File other){
-        track = other;
-    }
-    MainDisplayWindow getMainDisplayWindow(){
+    MainDisplayWindow getMainDisplayWindow() {
         return main_display_window;
     }
     
-    void setMainDisplayWindow(MainDisplayWindow other){
+    
+    /* MUTATORS */
+    
+    void setTrack(File other) {
+        track = other;
+    }
+    
+    void setMainDisplayWindow(MainDisplayWindow other) {
         main_display_window = other;
     }
 }
