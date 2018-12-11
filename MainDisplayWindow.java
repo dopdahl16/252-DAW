@@ -6,6 +6,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 /**
@@ -178,6 +179,81 @@ public class MainDisplayWindow extends JPanel {
     	
     }
     
+    //Unfinished
+    void resample(int resample_rate) {
+    	
+    	File current_file = getTracksList().get(getCurrentTrack());
+    	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "_resampled_" + getTracksList().get(getCurrentTrack()).getName());
+    	
+    	FileOutputStream out = null;
+    	FileInputStream in = null;
+    	
+    	
+		try {
+			in = new FileInputStream(current_file);
+			out = new FileOutputStream(write_file);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		try {
+			int i=0;
+			while(i < 11 ) {
+					
+					byte b1 = (byte) (in.read() & 0xff);
+					byte b2 = (byte) (in.read() & 0xff);
+					byte b3 = (byte) (in.read() & 0xff);
+					byte b4 = (byte) (in.read() & 0xff);
+					i++;
+					int val = b4 << 24 | b3 << 16 & 0xff0000 | b2 << 8 & 0xff00 | ((int) b1) & 0xff;
+					
+					if (i == 7) {
+						
+						
+						
+						byte leastSignificantByte = (byte) (val & 0xff);
+					    byte nextToLeastSignificantByte = (byte) (val >> 8 & 0xff);
+					    byte nextToMostSignificantByte = (byte) (val >> 16 & 0xff);
+					    byte mostSignificantByte = (byte) (val >> 32 & 0xff);
+					    
+					    out.write(leastSignificantByte);
+				        out.write(nextToLeastSignificantByte);
+				        out.write(nextToMostSignificantByte);
+				        out.write(mostSignificantByte);
+						
+						System.out.println("VAL: " + val);
+					}
+					if (i == 8) {
+						
+						val = val *2;
+						
+						byte leastSignificantByte = (byte) (val & 0xff);
+					    byte nextToLeastSignificantByte = (byte) (val >> 8 & 0xff);
+					    byte nextToMostSignificantByte = (byte) (val >> 16 & 0xff);
+					    byte mostSignificantByte = (byte) (val >> 32 & 0xff);
+					    
+					    out.write(leastSignificantByte);
+				        out.write(nextToLeastSignificantByte);
+				        out.write(nextToMostSignificantByte);
+				        out.write(mostSignificantByte);
+					}
+					if (i != 7 && i != 8) {
+						out.write(b1);
+				        out.write(b2);
+				        out.write(b3);
+				        out.write(b4);
+					}
+				
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    
     //adjustAmplitudeNormalize creates a write_file to write the edited track to. It also creates a FileInputStream 
     //out of current_file and a FileOutputStream out of write_file. Then, it copies the file header of the .wav
     //file from the FileOutputStream to the FileInputStream. Then, it reads through all of the audio data and finds
@@ -318,7 +394,7 @@ public class MainDisplayWindow extends JPanel {
 			
 			}
 			getTracksList().add(write_file);
-      getMainDisplayWindow().addAudioFile(getTracksList().indexOf(write_file));
+                        addAudioFile(getTracksList().indexOf(write_file));
         
 		} 
     catch (Exception could_not_read_write_to_iostreams) {}
@@ -431,7 +507,7 @@ public class MainDisplayWindow extends JPanel {
     		  }
         }
       getTracksList().add(write_file);
-      getMainDisplayWindow().addAudioFile(getTracksList().indexOf(write_file));
+      addAudioFile(getTracksList().indexOf(write_file));
     }
     
     void reverse() {
@@ -493,7 +569,7 @@ public class MainDisplayWindow extends JPanel {
       catch (Exception could_not_read_write_to_iostreams) {}
       
       getTracksList().add(write_file);
-      getMainDisplayWindow().addAudioFile(getTracksList().indexOf(write_file));
+      addAudioFile(getTracksList().indexOf(write_file));
     }
   
     /* ACCESSORS */
