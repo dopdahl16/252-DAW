@@ -189,8 +189,10 @@ public class MainDisplayWindow extends JPanel {
     void adjustAmplitudeClip(double scaling_ratio) {
     	
     	File current_file = getTracksList().get(getCurrentTrack());
-    	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "1" + getTracksList().get(getCurrentTrack()).getName());
+    	File write_file = new File("C:\\Users\\Noah\\Desktop\\" + "amplitude_clipped " + getTracksList().get(getCurrentTrack()).getName());
+        
     	
+        
     	FileOutputStream out = null;
     	FileInputStream in = null;
     	
@@ -251,7 +253,8 @@ public class MainDisplayWindow extends JPanel {
 				out.write(b4);
 			
 			}
-			
+		getTracksList().add(write_file);
+                this.addAudioFile(getTracksList().indexOf(write_file));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -282,8 +285,8 @@ public class MainDisplayWindow extends JPanel {
     	
     	
     	File current_file = getTracksList().get(getCurrentTrack());
-    	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "1" + getTracksList().get(getCurrentTrack()).getName());
-    	
+    	File write_file = new File("C:\\Users\\Noah\\Desktop\\" + getTracksList().get(getCurrentTrack()).getName());
+        
     	FileOutputStream out = null;
     	FileInputStream in = null;
     	
@@ -380,6 +383,8 @@ public class MainDisplayWindow extends JPanel {
 				out.write(b4);
 			
 			}
+                getTracksList().add(write_file);
+                this.addAudioFile(getTracksList().indexOf(write_file));
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
