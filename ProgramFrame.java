@@ -21,7 +21,6 @@ import javax.swing.JFrame;
  */
 
 ////TODO REPLACE DESKTOP SAVING OF STATE PATH WITH "src/data/state_restore/state.ser"
-////TODO Maybe remove all of save_state stuff???
 
 //The ProgramFrame class is where our swing components are added and we hold "global" objects e.g., 
 //current_track. These objects are needed by most components are thus are stored at the highest
@@ -39,7 +38,6 @@ public class ProgramFrame extends JFrame {
     public static MenuBar our_menu_bar;
     public static ToolBar our_tool_bar;
     public static JLabel our_current_track_display;
-    //public SaveState save_state;
     public long position = 0;
 
     
@@ -94,12 +92,6 @@ public class ProgramFrame extends JFrame {
 			        
 					if (save_reply == JOptionPane.YES_OPTION) {
 					
-						/*
-						getSaveState().setTracksList(getMainDisplayWindow().getTracksList());
-						System.out.println("SAVing track list: " + getSaveState().getTracksList());
-						getSaveState().setCurrentTrack(getMainDisplayWindow().getCurrentTrack());
-						*/
-			        	
 						//Here, we create a FileOutputStream to our destination file, then we create a 
 						//ObjectOutputStream to our FileOutputStream. Next, we write the track_list. 
 						//Then, we attempt to write the position of the current clip, so the user can
@@ -164,7 +156,6 @@ public class ProgramFrame extends JFrame {
         	our_current_track_display = new JLabel("No Current Track");
         }
             
-        //save_state = new SaveState();
         
         //Here we create, specify, and add the GridBagConstraints for every component of our ProgramFrame. 
         GridBagConstraints menuBarConstraints = new GridBagConstraints();
@@ -233,11 +224,7 @@ public class ProgramFrame extends JFrame {
     MainDisplayWindow getMainDisplayWindow() {
         return our_main_display_window;
     }
-    /*
-    SaveState getSaveState() {
-		return save_state;
-    }
-    */
+   
     int getCurrentTrack() {
         return current_track;
     }
@@ -252,11 +239,7 @@ public class ProgramFrame extends JFrame {
     void setMainDisplayWindow(MainDisplayWindow other) {
     	our_main_display_window = other;
     }
-    /*
-    void setSaveState(SaveState other) {
-    	save_state = other;
-    }
-    */
+   
     void setCurrentTrack(int other) {
         current_track = other;
         

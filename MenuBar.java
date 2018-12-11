@@ -388,7 +388,7 @@ public class MenuBar extends JMenuBar implements ActionListener {
         	else {
             	
             	File current_file = getTracksList().get(getMainDisplayWindow().getCurrentTrack());
-            	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + "REVERSE" + getTracksList().get(getMainDisplayWindow().getCurrentTrack()).getName());
+            	File write_file = new File(current_file.getPath() + "REVERSE");
             	
             	short[] short_array = new short[(int) (getMainDisplayWindow().getTracksList().get(getMainDisplayWindow().getCurrentTrack()).length() - 44)/2];
             	
@@ -442,6 +442,8 @@ public class MenuBar extends JMenuBar implements ActionListener {
         				out.write(b3);
         				out.write(b4);
         			}
+                                getTracksList().add(write_file);
+                                getMainDisplayWindow().addAudioFile(getTracksList().indexOf(write_file));
         			
         		} catch (IOException t) {
         			// TODO Auto-generated catch block

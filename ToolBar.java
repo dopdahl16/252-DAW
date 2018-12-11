@@ -40,7 +40,6 @@ public class ToolBar extends JToolBar implements ActionListener {
     public File sound_file;
     public ArrayList<File> tracks_list;
     public MainDisplayWindow main_display_window;
-    public SaveState save_state;
     
     /* CONSTRUCTOR */
     
@@ -131,7 +130,6 @@ public class ToolBar extends JToolBar implements ActionListener {
         				if (getFile() == getTracksList().get(getMainDisplayWindow().getCurrentTrack())) {
         					
         					our_clip.setMicrosecondPosition(current_position);
-    	        			//getSaveState().setcurrent_position(our_clip.getMicrosecondPosition());
     	        			our_clip.start();
     	        			status = "playing";
     	        			
@@ -288,11 +286,7 @@ public class ToolBar extends JToolBar implements ActionListener {
     public Clip getClip() {
         return our_clip;
     }
-    /*
-    SaveState getSaveState() {
-		return save_state;
-    }
-    */
+    
     MainDisplayWindow getMainDisplayWindow() {
         return main_display_window;
     }
@@ -339,7 +333,4 @@ public class ToolBar extends JToolBar implements ActionListener {
         main_display_window = other;
     }
     
-    void setSaveState(SaveState other) {
-    	save_state = other;
-    }
 }
