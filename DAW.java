@@ -46,13 +46,7 @@ public class DAW {
 }
 /*
 GENERAL TO DO BEFORE FINAL TURN IN:
-Make sure all try-catch blocks are in order
-Commentation
-Rename Excdptions!
 Indentation and perfect white space
 check public/private field declarations
-variable names in the 
-be more specific with custom catch blocks
-Comment punctuation - periods n shit
 Go over System.out 's 
 */
