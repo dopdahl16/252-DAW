@@ -22,13 +22,8 @@ import java.text.DecimalFormat;
  * 
  */
 
-////TODO ADD A DELETE BUTTON WITH A POP-UP MENU THAT ASKS IF YOU REALLY DO WANT TO REMOVE THE TRACK
-////TODO ADD A SAVE BUTTON
-////TODO ADD BACKGROUND COLOR CHANGER TO SIGNIFY WHICH TRACK IS CURRENTLY SELECTED
 
 //The AudioDisplayContainer class serves as a container component for AudioFileInfo objects and 
-
-
 //The AudioFileInfo class serves as a display of a single track's information and as a way for
 //the user to interact with the track in certain application-wide ways (e.g., selecting it for
 //playback, deleting it from the tracks_list, etc.).
@@ -61,6 +56,7 @@ public class AudioFileInfo extends JPanel implements ActionListener {
         file_name.setText(getTrack().getName());
         file_size.setText("Size: " + Long.toString(getTrack().length()) + " bytes");
         AudioInputStream audioInputStream = null;
+        
 		try {
 			audioInputStream = AudioSystem.getAudioInputStream(getTrack());
 		} catch (UnsupportedAudioFileException e) {
@@ -70,6 +66,7 @@ public class AudioFileInfo extends JPanel implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+                
         AudioFormat format = audioInputStream.getFormat();
         long frames = audioInputStream.getFrameLength();
         double duration = (frames+0.0) / format.getFrameRate();
@@ -89,11 +86,11 @@ public class AudioFileInfo extends JPanel implements ActionListener {
         add(file_duration);
         add(select_button);
         add(delete_button);
-        add(save_button);
-        
+        add(save_button);   
     }
 
     @Override
+    
     public void actionPerformed(ActionEvent e) {
     	if (e.getActionCommand().equals("SELECT")) {
     		getMainDisplayWindow().selectTrack(getTrack());
@@ -110,7 +107,7 @@ public class AudioFileInfo extends JPanel implements ActionListener {
     		
     		File current_file = getMainDisplayWindow().getTracksList().get(getMainDisplayWindow().getCurrentTrack());
     		String write_file_name = JOptionPane.showInputDialog("What would you like to save this .wav File as?");
-        	File write_file = new File("C:\\Users\\dopda\\Desktop\\DAW WAV Files\\" + write_file_name + ".wav");
+        	File write_file = new File(current_file.getPath() + write_file_name + ".wav");
         	
         	FileOutputStream out = null;
         	FileInputStream in = null;
@@ -144,76 +141,29 @@ public class AudioFileInfo extends JPanel implements ActionListener {
     		}
         	
         }
-        
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
+        		
     	} 
     	
+    //ACCESSORS//
     
     File getTrack() {
         return track;
     }
     
-    void setTrack(File other) {
-        track = other;
-    }
     MainDisplayWindow getMainDisplayWindow() {
         return main_display_window;
     }
+    
+    AudioDisplayContainer getAudioDisplayContainer() {
+    	return audio_display_container;
+    }
+    
+    //MUTATORS//
+    
+    void setTrack(File other) {
+        track = other;
+    }
+    
     
     void setMainDisplayWindow(MainDisplayWindow other) {
         main_display_window = other;
@@ -221,7 +171,5 @@ public class AudioFileInfo extends JPanel implements ActionListener {
     void setAudioDisplayContainer(AudioDisplayContainer other) {
     	audio_display_container = other;
     }
-    AudioDisplayContainer getAudioDisplayContainer() {
-    	return audio_display_container;
-    }
+   
 }
