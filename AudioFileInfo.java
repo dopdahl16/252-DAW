@@ -5,13 +5,10 @@ import java.awt.event.*;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DecimalFormat;
 
 /**
@@ -63,13 +60,8 @@ public class AudioFileInfo extends JPanel implements ActionListener {
         AudioInputStream audioInputStream = null;
 		try {
 			audioInputStream = AudioSystem.getAudioInputStream(getTrack());
-		} catch (UnsupportedAudioFileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
+		catch (Exception could_not_open_clip_or_audiostream) {}
         AudioFormat format = audioInputStream.getFormat();
         long frames = audioInputStream.getFrameLength();
         double duration = (frames+0.0) / format.getFrameRate();
@@ -119,10 +111,7 @@ public class AudioFileInfo extends JPanel implements ActionListener {
     		try {
     			in = new FileInputStream(current_file);
     			out = new FileOutputStream(write_file);
-    		} catch (FileNotFoundException e1) {
-    			// TODO Auto-generated catch block
-    			e1.printStackTrace();
-    		}
+    		} catch (Exception file_not_found) {}
     		
     		
     		
@@ -138,70 +127,11 @@ public class AudioFileInfo extends JPanel implements ActionListener {
     			
     			}
     			
-    		} catch (IOException t) {
-    			// TODO Auto-generated catch block
-    			t.printStackTrace();
-    		}
+    		} catch (Exception could_not_read_write_to_iostreams) {}
         	
         }
         
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    	} 
+    } 
     	
     
     File getTrack() {
