@@ -1,4 +1,4 @@
-# 252-DAW
+# CS-252-DAW
 
 Contributing authors: Daniel Opdahl, Noah Manaternach
 
